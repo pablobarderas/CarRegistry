@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <!-- Brand table -->
+    <changeSet id="1" author="root">
+        <createTable tableName="brand">
+            <column name="id" type="INT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="country" type="VARCHAR(255)">
+            </column>
+            <column name="warranty" type="INT">
+            </column>
+        </createTable>
+    </changeSet>
+
+    <!-- Car table -->
+    <changeSet id="2" author="root">
+        <createTable tableName="car">
+            <column name="id" type="INT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="brand_id" type="INT">
+                <constraints nullable="false" />
+            </column>
+            <column name="model" type="VARCHAR(255)">
+            </column>
+            <column name="colour" type="VARCHAR(255)">
+            </column>
+            <column name="description" type="VARCHAR(255)">
+            </column>
+            <column name="fuel_type" type="VARCHAR(255)">
+            </column>
+            <column name="price" type="DOUBLE">
+            </column>
+            <column name="mileage" type="INT">
+            </column>
+            <column name="num_doors" type="INT">
+            </column>
+            <column name="year" type="INT">
+            </column>
+        </createTable>
+    </changeSet>
+
+    <!-- Car and brand foreign key -->
+    <changeSet id="3" author="root">
+        <addForeignKeyConstraint baseTableName="car"
+                                 baseColumnNames="brand_id"
+                                 referencedTableName="brand"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_car_brand"/>
+    </changeSet>
+
+</databaseChangeLog>
