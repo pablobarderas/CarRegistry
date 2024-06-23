@@ -30,22 +30,14 @@
             <column name="brand_id" type="INT">
                 <constraints nullable="false" />
             </column>
-            <column name="model" type="VARCHAR(255)">
-            </column>
-            <column name="colour" type="VARCHAR(255)">
-            </column>
-            <column name="description" type="VARCHAR(255)">
-            </column>
-            <column name="fuel_type" type="VARCHAR(255)">
-            </column>
-            <column name="price" type="DOUBLE">
-            </column>
-            <column name="mileage" type="INT">
-            </column>
-            <column name="num_doors" type="INT">
-            </column>
-            <column name="year" type="INT">
-            </column>
+            <column name="model" type="VARCHAR(255)"/>
+            <column name="colour" type="VARCHAR(255)"/>
+            <column name="description" type="VARCHAR(255)"/>
+            <column name="fuel_type" type="VARCHAR(255)"/>
+            <column name="price" type="DOUBLE"/>
+            <column name="mileage" type="INT"/>
+            <column name="num_doors" type="INT"/>
+            <column name="year" type="INT"/>
         </createTable>
     </changeSet>
 
@@ -57,5 +49,58 @@
                                  referencedColumnNames="id"
                                  constraintName="fk_car_brand"/>
     </changeSet>
+
+    <!-- BRAND INSERT 1 -->
+    <changeSet id="brand-insert-1" author="root">
+        <insert tableName="brand">
+            <column name="id" value="1" />
+            <column name="name" value="mercedes" />
+            <column name="warranty" value="5" />
+            <column name="country" value="Germany" />
+        </insert>
+    </changeSet>
+
+    <!-- BRAND INSERT 2 -->
+    <changeSet id="brand-insert-2" author="root">
+        <insert tableName="brand">
+            <column name="id" value="2" />
+            <column name="name" value="cupra" />
+            <column name="warranty" value="6" />
+            <column name="country" value="Spain" />
+        </insert>
+    </changeSet>
+
+    <!-- CAR INSERT 1 -->
+    <changeSet id="car-insert-1" author="root">
+        <insert tableName="car">
+            <column name="id" value="1" />
+            <column name="brand_id" value="2" />
+            <column name="model" value="tavascan" />
+            <column name="description" value="A seat expensive brand" />
+            <column name="fuel_type" value="diesel" />
+            <column name="colour" value="pink" />
+            <column name="num_doors" value="5" />
+            <column name="mileage" value="70160" />
+            <column name="price" value="45160" />
+            <column name="year" value="2023" />
+        </insert>
+    </changeSet>
+
+    <!-- CAR INSERT 2 -->
+    <changeSet id="car-insert-2" author="root">
+        <insert tableName="car">
+            <column name="id" value="2" />
+            <column name="brand_id" value="1" />
+            <column name="model" value="benz" />
+            <column name="description" value="The best car to drive long distances" />
+            <column name="fuel_type" value="diesel" />
+            <column name="colour" value="white" />
+            <column name="num_doors" value="5" />
+            <column name="mileage" value="16166" />
+            <column name="price" value="45166" />
+            <column name="year" value="2021" />
+        </insert>
+    </changeSet>
+    
 
 </databaseChangeLog>
