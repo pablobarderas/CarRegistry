@@ -3,7 +3,7 @@ package com.bardev.CarRegistry.controller;
 import com.bardev.CarRegistry.controller.dto.BrandDTO;
 import com.bardev.CarRegistry.controller.mapper.BrandMapper;
 import com.bardev.CarRegistry.service.impl.BrandServiceImpl;
-import com.bardev.CarRegistry.service.model.BrandService;
+import com.bardev.CarRegistry.service.model.Brand;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +23,7 @@ public class BrandController {
     public ResponseEntity<List<BrandDTO>> getBrands(){
         try {
             log.info("Get all brands");
-            return ResponseEntity.ok(BrandMapper.mapper.brandServiceListToBrandDTOList(brandServiceImpl.getBrands()));
+            return ResponseEntity.ok(BrandMapper.mapper.brandListToBrandDTOList(brandServiceImpl.getBrands()));
         }catch (NoSuchElementException e){
             log.error("There are no brands");
             return ResponseEntity.notFound().build();
@@ -36,14 +36,14 @@ public class BrandController {
     @GetMapping("/brands/{id}")
     public ResponseEntity<BrandDTO> getBrandById(@PathVariable Integer id){
         try {
-            log.info("Get brand by id: {}",id);
-            BrandService brandService = brandServiceImpl.getBrandById(id);
-            return ResponseEntity.ok(BrandMapper.mapper.brandServiceToBrandDTO(brandService));
+            log.info("Get brandEntity by id: {}",id);
+            Brand brand = brandServiceImpl.getBrandById(id);
+            return ResponseEntity.ok(BrandMapper.mapper.brandToBrandDTO(brand));
         }catch (NoSuchElementException e){
             log.info("No such element with id: {}",id);
             return ResponseEntity.notFound().build();
         }catch (Exception e){
-            log.error("Internal server error getting brand by id");
+            log.error("Internal server error getting brandEntity by id");
             return ResponseEntity.internalServerError().build();
         }
     }
@@ -52,11 +52,11 @@ public class BrandController {
     public ResponseEntity<BrandDTO> addBrand(@RequestBody BrandDTO brandDTO){
 
         try {
-            BrandDTO brandDTOGet = BrandMapper.mapper.brandServiceToBrandDTO(brandServiceImpl
-                    .addBrand(BrandMapper.mapper.brandDTOToBrandService(brandDTO)));
+            BrandDTO brandDTOGet = BrandMapper.mapper.brandToBrandDTO(brandServiceImpl
+                    .addBrand(BrandMapper.mapper.brandDTOToBrand(brandDTO)));
                     return ResponseEntity.ok(brandDTOGet);
         }catch (Exception e){
-            log.error("Internal server error adding brand");
+            log.error("Internal server error adding brandEntity");
             return ResponseEntity.internalServerError().build();
         }
     }
@@ -65,17 +65,17 @@ public class BrandController {
     public ResponseEntity<BrandDTO> updateBrand(@PathVariable Integer id, @RequestBody BrandDTO brandDTO){
 
         try{
-            log.info("Updating brand: {}", brandDTO);
+            log.info("Updating brandEntity: {}", brandDTO);
             BrandDTO brandUpdated = BrandMapper.mapper
-                    .brandServiceToBrandDTO(
+                    .brandToBrandDTO(
                             brandServiceImpl.updateBrand(id, BrandMapper.mapper
-                            .brandDTOToBrandService(brandDTO)));
+                            .brandDTOToBrand(brandDTO)));
             return ResponseEntity.ok(brandUpdated);
         }catch (NoSuchElementException e){
             log.error("No such element with id: {}", id);
             return ResponseEntity.notFound().build();
         }catch (Exception e){
-            log.error("Internal server error updating brand");
+            log.error("Internal server error updating brandEntity");
             return ResponseEntity.internalServerError().build();
         }
     }
@@ -84,14 +84,14 @@ public class BrandController {
     public ResponseEntity<BrandDTO> deleteBrand(@PathVariable Integer id){
 
         try{
-            log.info("Deleting brand with id: {}", id);
+            log.info("Deleting brandEntity with id: {}", id);
             brandServiceImpl.deleteBrand(id);
             return ResponseEntity.ok().build();
         }catch (NoSuchElementException e){
             log.info("No such element with id: {}", id);
             return ResponseEntity.notFound().build();
         }catch (Exception e){
-            log.info("Internal server error trying delete brand with id: {}", id);
+            log.info("Internal server error trying delete brandEntity with id: {}", id);
             return ResponseEntity.internalServerError().build();
         }
 

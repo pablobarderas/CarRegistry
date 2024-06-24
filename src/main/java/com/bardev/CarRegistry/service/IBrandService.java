@@ -1,13 +1,13 @@
 package com.bardev.CarRegistry.service;
 
-import com.bardev.CarRegistry.service.model.BrandService;
+import com.bardev.CarRegistry.service.model.Brand;
 
 import java.util.List;
 
 public interface IBrandService {
-    List<BrandService> getBrands();
-    BrandService getBrandById(Integer id);
-    BrandService addBrand(BrandService brandService);
-    BrandService updateBrand(Integer id, BrandService brandService);
+    List<Brand> getBrands();
+    Brand getBrandById(Integer id);
+    Brand addBrand(Brand brand);
+    Brand updateBrand(Integer id, Brand brand);
     void deleteBrand(Integer id);
 }

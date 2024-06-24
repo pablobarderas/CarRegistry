@@ -2,18 +2,15 @@ package com.bardev.CarRegistry.service.impl;
 
 import com.bardev.CarRegistry.repository.BrandRepository;
 import com.bardev.CarRegistry.repository.CarRepository;
-import com.bardev.CarRegistry.repository.entity.CarEntity;
 import com.bardev.CarRegistry.repository.mapper.BrandEntityMapper;
 import com.bardev.CarRegistry.repository.mapper.CarEntityMapper;
 import com.bardev.CarRegistry.service.CarService;
-import com.bardev.CarRegistry.service.model.BrandService;
+import com.bardev.CarRegistry.service.model.Brand;
 import com.bardev.CarRegistry.service.model.Car;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -53,15 +50,15 @@ public class CarServiceImpl implements CarService {
             throw new IllegalArgumentException();
         }
 
-        // Get brandService from Car
-        BrandService brandService =  brandRepository.findByName(
+        // Get brand from Car
+        Brand brand =  brandRepository.findByName(
                 car.getBrand().getName())
-                .map(BrandEntityMapper.mapper::brandToBrandService)
-                .orElseThrow(() -> new NoSuchElementException("Brand not found with id: " + car.getBrand().getId()));
+                .map(BrandEntityMapper.mapper::brandEntityToBrand)
+                .orElseThrow(() -> new NoSuchElementException("BrandEntity not found with id: " + car.getBrand().getId()));
 
-        // Set brand
+        // Set brandEntity
         Car carCorrect = car;
-        carCorrect.setBrand(BrandEntityMapper.mapper.brandServiceToBrand(brandService));
+        carCorrect.setBrand(BrandEntityMapper.mapper.brandToBrandEntity(brand));
 
         log.info(carCorrect.getBrand().getName());
 
@@ -79,11 +76,11 @@ public class CarServiceImpl implements CarService {
             throw new NoSuchElementException("The car is not present on database");
         }
 
-        System.out.println("car" + car.toString());
+        // probar a hacerlo directamente con el car
 
-        // Search brand
-        BrandService brand = brandRepository.findByName(String.valueOf(car.getBrand().getName()))
-                .map(BrandEntityMapper.mapper::brandToBrandService)
+        // Search brandEntity
+        Brand brand = brandRepository.findByName(String.valueOf(car.getBrand().getName()))
+                .map(BrandEntityMapper.mapper::brandEntityToBrand)
                 .orElseThrow(NoSuchElementException::new);
 
         // Search car
@@ -92,21 +89,15 @@ public class CarServiceImpl implements CarService {
                 .map(CarEntityMapper.mapper::carEntityToCar)
                 .orElseThrow(NoSuchElementException::new);
 
-        System.out.println("car" + carUpdate.toString());
 
 
-
-
-        //log.info(carUpdate.toString());
-
-
-       // log.info(brand.toString());
-
-
-        // Set id and brand of car
+        // Set id and brandEntity of car
         carUpdate.setId(car.getId());
-        carUpdate.setBrand(BrandEntityMapper.mapper.brandServiceToBrand(brand));
+        carUpdate.setBrand(BrandEntityMapper.mapper.brandToBrandEntity(brand));
 
+        log.info("Brand of car: {}", carUpdate.getBrand().getName());
+        log.info("Car description: {}", carUpdate.getDescription());
+        log.info("Brand id: {}", carUpdate.getBrand().getId());
         //log.info(carUpdate.toString());
 
         return CarEntityMapper.mapper.carEntityToCar(

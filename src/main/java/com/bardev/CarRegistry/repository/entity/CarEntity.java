@@ -1,8 +1,6 @@
 package com.bardev.CarRegistry.repository.entity;
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -19,7 +17,7 @@ public class CarEntity {
 
     @ManyToOne
     @JoinColumn(name = "brand_id")
-    private Brand brand;
+    private BrandEntity brand;
 
     private String model;
     private Integer mileage;

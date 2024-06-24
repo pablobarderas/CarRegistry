@@ -1,6 +1,6 @@
 package com.bardev.CarRegistry.service.model;
 
-import com.bardev.CarRegistry.repository.entity.Brand;
+import com.bardev.CarRegistry.repository.entity.BrandEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 public class Car {
 
     private Integer id;
-    private Brand brand;
+    private BrandEntity brand;
     private String model;
     private Integer mileage;
     private Double price;

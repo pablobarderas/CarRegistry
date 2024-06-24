@@ -2,9 +2,8 @@ package com.bardev.CarRegistry.service.impl;
 
 import com.bardev.CarRegistry.repository.BrandRepository;
 import com.bardev.CarRegistry.repository.mapper.BrandEntityMapper;
-import com.bardev.CarRegistry.service.model.BrandService;
+import com.bardev.CarRegistry.service.model.Brand;
 import com.bardev.CarRegistry.service.IBrandService;
-import com.bardev.CarRegistry.service.model.Car;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,48 +17,48 @@ public class BrandServiceImpl implements IBrandService {
     BrandRepository brandRepository;
 
     @Override
-    public List<BrandService> getBrands() {
-        return BrandEntityMapper.mapper.brandListToBrandServiceList(brandRepository.findAll());
+    public List<Brand> getBrands() {
+        return BrandEntityMapper.mapper.brandEntityListToBrandList(brandRepository.findAll());
     }
 
     @Override
-    public BrandService getBrandById(Integer id) {
+    public Brand getBrandById(Integer id) {
         return brandRepository
                 .findById(id)
-                .map(BrandEntityMapper.mapper::brandToBrandService)
+                .map(BrandEntityMapper.mapper::brandEntityToBrand)
                 .orElseThrow(NoSuchFieldError::new);
     }
 
     @Override
-    public BrandService addBrand(BrandService brandService) {
+    public Brand addBrand(Brand brand) {
 
-        if (brandService == null){
+        if (brand == null){
             throw new IllegalArgumentException();
         }
 
         return BrandEntityMapper
                 .mapper
-                .brandToBrandService(
+                .brandEntityToBrand(
                 brandRepository
-                        .save(BrandEntityMapper.mapper.brandServiceToBrand(brandService)));
+                        .save(BrandEntityMapper.mapper.brandToBrandEntity(brand)));
     }
 
     @Override
-    public BrandService updateBrand(Integer id, BrandService brandService) {
+    public Brand updateBrand(Integer id, Brand brand) {
 
         // Check exist
         if (!brandRepository.existsById(id)){
             throw new NoSuchElementException("The car is not present on database");
         }
 
-        // Set id and save brand
-        BrandService brandServiceUpdate = brandService;
-        brandServiceUpdate.setId(id);
+        // Set id and save brandEntity
+        Brand brandUpdate = brand;
+        brandUpdate.setId(id);
 
-        return BrandEntityMapper.mapper.brandToBrandService(
+        return BrandEntityMapper.mapper.brandEntityToBrand(
                 brandRepository
                         .save(BrandEntityMapper.mapper
-                                .brandServiceToBrand(brandServiceUpdate)));
+                                .brandToBrandEntity(brandUpdate)));
 
     }
 

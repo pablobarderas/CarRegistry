@@ -11,7 +11,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class BrandService {
+public class Brand {
 
     private Integer id;
     private String name;

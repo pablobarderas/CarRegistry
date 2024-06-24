@@ -1,7 +1,7 @@
 package com.bardev.CarRegistry.repository.mapper;
 
-import com.bardev.CarRegistry.repository.entity.Brand;
-import com.bardev.CarRegistry.service.model.BrandService;
+import com.bardev.CarRegistry.repository.entity.BrandEntity;
+import com.bardev.CarRegistry.service.model.Brand;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
@@ -12,12 +12,12 @@ public interface BrandEntityMapper {
 
     BrandEntityMapper mapper = Mappers.getMapper(BrandEntityMapper.class);
 
-    // Brand with carList and without it
-    BrandService brandToBrandService(Brand brand);
+    // BrandEntity with carList and without it
+    Brand brandEntityToBrand(BrandEntity brandEntity);
 
-    Brand brandServiceToBrand(BrandService brandService);
+    BrandEntity brandToBrandEntity(Brand brand);
 
-    List<Brand> brandServiceListToBrandList(List<BrandService> brandServiceList);
-    List<BrandService> brandListToBrandServiceList(List<Brand> brandList);
+    List<BrandEntity> brandListToBrandEntityList(List<Brand> brandList);
+    List<Brand> brandEntityListToBrandList(List<BrandEntity> brandEntityList);
 
 }

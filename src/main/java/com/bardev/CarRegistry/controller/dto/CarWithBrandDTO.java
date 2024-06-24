@@ -1,6 +1,5 @@
 package com.bardev.CarRegistry.controller.dto;
 
-import com.bardev.CarRegistry.repository.entity.Brand;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

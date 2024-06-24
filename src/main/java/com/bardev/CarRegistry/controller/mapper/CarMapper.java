@@ -3,12 +3,10 @@ package com.bardev.CarRegistry.controller.mapper;
 import com.bardev.CarRegistry.controller.dto.BrandDTO;
 import com.bardev.CarRegistry.controller.dto.CarDTO;
 import com.bardev.CarRegistry.controller.dto.CarWithBrandDTO;
-import com.bardev.CarRegistry.repository.entity.Brand;
-import com.bardev.CarRegistry.service.model.BrandService;
+import com.bardev.CarRegistry.service.model.Brand;
 import com.bardev.CarRegistry.service.model.Car;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -21,15 +19,15 @@ public interface CarMapper {
 
     CarMapper mapper = Mappers.getMapper(CarMapper.class);
 
-    //@Mapping(target = "brand", source = "brandName", qualifiedByName = "stringToBrand")
+    //@Mapping(target = "brandEntity", source = "brandName", qualifiedByName = "stringToBrand")
     @Mapping(target = "brand.name", source = "brandName")
     Car carDTOToCar(CarDTO carDTO);
 
-    //@Mapping(target = "brandName", source = "brand", qualifiedByName = "brandToString")
+    //@Mapping(target = "brandName", source = "brandEntity", qualifiedByName = "brandToString")
     @Mapping(target = "brandName", source = "brand.name")
     CarDTO carToCarDTO(Car car);
 
-    // Car with brand object
+    // Car with brandEntity object
     CarWithBrandDTO carToCarWithBrandDTO(Car car);
     Car CarWithBrandDTOToCar(CarWithBrandDTO carWithBrandDTO);
     List<CarWithBrandDTO> carListToCarWithBrandDTOList(List<Car> carList);
@@ -53,28 +51,28 @@ public interface CarMapper {
                 .collect(Collectors.toList());
         return new PageImpl<>(carDTOs, carPage.getPageable(), carPage.getTotalElements());
     }
-    // Brand with carList and without it
+    // BrandEntity with carList and without it
     @Mapping(target = "carEntityList", ignore = true)
-    BrandService brandDTOToBrandService(BrandDTO brandDTO);
-    BrandDTO brandServiceToBrandDTO(BrandService brandService);
+    Brand brandDTOToBrandService(BrandDTO brandDTO);
+    BrandDTO brandServiceToBrandDTO(Brand brand);
 
     /* Parse methods
     @Named("stringToBrand")
-    default Brand stringToBrand(String brandName) {
+    default BrandEntity stringToBrand(String brandName) {
         if (brandName == null) {
             return null;
         }
-        Brand brand = new Brand();
-        brand.setName(brandName);
-        return brand;
+        BrandEntity brandEntity = new BrandEntity();
+        brandEntity.setName(brandName);
+        return brandEntity;
     }
 
     @Named("brandToString")
-    default String brandToString(Brand brand) {
-        if (brand == null) {
+    default String brandToString(BrandEntity brandEntity) {
+        if (brandEntity == null) {
             return null;
         }
-        return brand.getName();
+        return brandEntity.getName();
     }*/
 
 
