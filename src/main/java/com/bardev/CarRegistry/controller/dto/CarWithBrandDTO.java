@@ -2,12 +2,14 @@ package com.bardev.CarRegistry.controller.dto;
 
 import com.bardev.CarRegistry.repository.entity.Brand;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class CarWithBrandDTO {
 
     private Integer id;

@@ -1,6 +1,7 @@
 package com.bardev.CarRegistry.service.model;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -9,12 +10,13 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class BrandService {
 
-    Integer id;
+    private Integer id;
     private String name;
     private Integer warranty;
     private String country;
-    List<Car> carEntityList;
+    private List<Car> carEntityList;
 
 }

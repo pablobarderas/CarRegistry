@@ -3,6 +3,7 @@ package com.bardev.CarRegistry.repository.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -17,13 +18,13 @@ public class Brand {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Integer id;
+    private Integer id;
 
     private String name;
     private Integer warranty;
     private String country;
 
     @OneToMany(mappedBy = "brand", cascade = CascadeType.ALL)
-    List<CarEntity> carEntityList;
+    private List<CarEntity> carEntityList;
 
 }

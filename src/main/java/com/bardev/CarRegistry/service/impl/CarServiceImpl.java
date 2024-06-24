@@ -65,8 +65,6 @@ public class CarServiceImpl implements CarService {
 
         log.info(carCorrect.getBrand().getName());
 
-
-
         return  CarEntityMapper.mapper.carEntityToCar
                 (carRepository.save(
                         CarEntityMapper.mapper.carToCarEntity(carCorrect)));
@@ -81,14 +79,35 @@ public class CarServiceImpl implements CarService {
             throw new NoSuchElementException("The car is not present on database");
         }
 
-        // Make sure that id car is correct
-        Car carUpdate = car;
-        BrandService brand = BrandEntityMapper.mapper.brandToBrandService(brandRepository.findByName
-                (car.getBrand().getName())
-                .orElseThrow(NoSuchElementException::new));
+        System.out.println("car" + car.toString());
 
-        carUpdate.setId(id);
+        // Search brand
+        BrandService brand = brandRepository.findByName(String.valueOf(car.getBrand().getName()))
+                .map(BrandEntityMapper.mapper::brandToBrandService)
+                .orElseThrow(NoSuchElementException::new);
+
+        // Search car
+        Car carUpdate =
+                carRepository.findById(id)
+                .map(CarEntityMapper.mapper::carEntityToCar)
+                .orElseThrow(NoSuchElementException::new);
+
+        System.out.println("car" + carUpdate.toString());
+
+
+
+
+        //log.info(carUpdate.toString());
+
+
+       // log.info(brand.toString());
+
+
+        // Set id and brand of car
+        carUpdate.setId(car.getId());
         carUpdate.setBrand(BrandEntityMapper.mapper.brandServiceToBrand(brand));
+
+        //log.info(carUpdate.toString());
 
         return CarEntityMapper.mapper.carEntityToCar(
                 carRepository.save(CarEntityMapper.mapper.carToCarEntity(carUpdate)));

@@ -76,7 +76,8 @@ public class CarController {
 
         try{
             log.info("Updating car: {}", carDTO);
-            CarDTO carUpdated = CarMapper.mapper.carToCarDTO(carService.updateCar(id, CarMapper.mapper.carDTOToCar(carDTO)));
+            CarDTO carUpdated = CarMapper.mapper.carToCarDTO(
+                    carService.updateCar(id, CarMapper.mapper.carDTOToCar(carDTO)));
             return ResponseEntity.ok(carUpdated);
         }catch (NoSuchElementException e){
             log.error("No such element with id: {}", id);

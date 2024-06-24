@@ -2,12 +2,14 @@ package com.bardev.CarRegistry.service.model;
 
 import com.bardev.CarRegistry.repository.entity.Brand;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class Car {
 
     private Integer id;

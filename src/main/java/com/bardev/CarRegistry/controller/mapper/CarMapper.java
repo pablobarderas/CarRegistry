@@ -21,10 +21,12 @@ public interface CarMapper {
 
     CarMapper mapper = Mappers.getMapper(CarMapper.class);
 
-    @Mapping(target = "brand", source = "brandName", qualifiedByName = "stringToBrand")
+    //@Mapping(target = "brand", source = "brandName", qualifiedByName = "stringToBrand")
+    @Mapping(target = "brand.name", source = "brandName")
     Car carDTOToCar(CarDTO carDTO);
 
-    @Mapping(target = "brandName", source = "brand", qualifiedByName = "brandToString")
+    //@Mapping(target = "brandName", source = "brand", qualifiedByName = "brandToString")
+    @Mapping(target = "brandName", source = "brand.name")
     CarDTO carToCarDTO(Car car);
 
     // Car with brand object
@@ -56,7 +58,7 @@ public interface CarMapper {
     BrandService brandDTOToBrandService(BrandDTO brandDTO);
     BrandDTO brandServiceToBrandDTO(BrandService brandService);
 
-    // Parse methods
+    /* Parse methods
     @Named("stringToBrand")
     default Brand stringToBrand(String brandName) {
         if (brandName == null) {
@@ -73,7 +75,7 @@ public interface CarMapper {
             return null;
         }
         return brand.getName();
-    }
+    }*/
 
 
 }
