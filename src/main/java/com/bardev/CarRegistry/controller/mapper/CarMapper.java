@@ -51,29 +51,5 @@ public interface CarMapper {
                 .collect(Collectors.toList());
         return new PageImpl<>(carDTOs, carPage.getPageable(), carPage.getTotalElements());
     }
-    // BrandEntity with carList and without it
-    @Mapping(target = "carEntityList", ignore = true)
-    Brand brandDTOToBrandService(BrandDTO brandDTO);
-    BrandDTO brandServiceToBrandDTO(Brand brand);
-
-    /* Parse methods
-    @Named("stringToBrand")
-    default BrandEntity stringToBrand(String brandName) {
-        if (brandName == null) {
-            return null;
-        }
-        BrandEntity brandEntity = new BrandEntity();
-        brandEntity.setName(brandName);
-        return brandEntity;
-    }
-
-    @Named("brandToString")
-    default String brandToString(BrandEntity brandEntity) {
-        if (brandEntity == null) {
-            return null;
-        }
-        return brandEntity.getName();
-    }*/
-
 
 }

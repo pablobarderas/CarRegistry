@@ -76,29 +76,17 @@ public class CarServiceImpl implements CarService {
             throw new NoSuchElementException("The car is not present on database");
         }
 
-        // probar a hacerlo directamente con el car
-
         // Search brandEntity
         Brand brand = brandRepository.findByName(String.valueOf(car.getBrand().getName()))
                 .map(BrandEntityMapper.mapper::brandEntityToBrand)
                 .orElseThrow(NoSuchElementException::new);
 
-        // Search car
-        Car carUpdate =
-                carRepository.findById(id)
-                .map(CarEntityMapper.mapper::carEntityToCar)
-                .orElseThrow(NoSuchElementException::new);
-
-
+        // Update car
+        Car carUpdate = car;
 
         // Set id and brandEntity of car
         carUpdate.setId(car.getId());
         carUpdate.setBrand(BrandEntityMapper.mapper.brandToBrandEntity(brand));
-
-        log.info("Brand of car: {}", carUpdate.getBrand().getName());
-        log.info("Car description: {}", carUpdate.getDescription());
-        log.info("Brand id: {}", carUpdate.getBrand().getId());
-        //log.info(carUpdate.toString());
 
         return CarEntityMapper.mapper.carEntityToCar(
                 carRepository.save(CarEntityMapper.mapper.carToCarEntity(carUpdate)));
