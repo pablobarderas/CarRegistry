@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -36,6 +37,7 @@ public class CarServiceImpl implements CarService {
 
 
     // GET ALL CARS
+    // If you have no cars, return empty list
     @Override
     public List<Car> getCars() {
         return carEntityMapper.carEntityListToCarList(carRepository.findAll());
