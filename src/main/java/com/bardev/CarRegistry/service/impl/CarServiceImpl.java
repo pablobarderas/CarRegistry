@@ -59,14 +59,13 @@ public class CarServiceImpl implements CarService {
         }
 
         // Get brand from Car
-        Brand brand =  brandRepository.findByName(
+        BrandEntity brand =  brandRepository.findByName(
                 car.getBrand().getName())
-                .map(brandEntityMapper::brandEntityToBrand)
                 .orElseThrow(() -> new NoSuchElementException("BrandEntity not found with id: " + car.getBrand().getId()));
 
         // Set brandEntity
         CarEntity entity = carEntityMapper.carToCarEntity(car);
-        entity.setBrand(brandEntityMapper.brandToBrandEntity(brand));
+        entity.setBrand(brand);
 
         return  carEntityMapper.carEntityToCar
                 (carRepository.save(entity));
