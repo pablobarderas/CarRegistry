@@ -65,14 +65,11 @@ public class CarServiceImpl implements CarService {
                 .orElseThrow(() -> new NoSuchElementException("BrandEntity not found with id: " + car.getBrand().getId()));
 
         // Set brandEntity
-        Car carCorrect = car;
-        carCorrect.setBrand(brandEntityMapper.brandToBrandEntity(brand));
-
-        log.info(carCorrect.getBrand().getName());
+        CarEntity entity = carEntityMapper.carToCarEntity(car);
+        entity.setBrand(brandEntityMapper.brandToBrandEntity(brand));
 
         return  carEntityMapper.carEntityToCar
-                (carRepository.save(
-                        carEntityMapper.carToCarEntity(carCorrect)));
+                (carRepository.save(entity));
     }
 
     // UPDATE CAR
