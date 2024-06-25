@@ -14,18 +14,21 @@ import java.util.NoSuchElementException;
 public class BrandServiceImpl implements IBrandService {
 
     @Autowired
-    BrandRepository brandRepository;
+    private BrandRepository brandRepository;
+
+    @Autowired
+    private BrandEntityMapper brandEntityMapper;
 
     @Override
     public List<Brand> getBrands() {
-        return BrandEntityMapper.mapper.brandEntityListToBrandList(brandRepository.findAll());
+        return brandEntityMapper.brandEntityListToBrandList(brandRepository.findAll());
     }
 
     @Override
     public Brand getBrandById(Integer id) {
         return brandRepository
                 .findById(id)
-                .map(BrandEntityMapper.mapper::brandEntityToBrand)
+                .map(brandEntityMapper::brandEntityToBrand)
                 .orElseThrow(NoSuchFieldError::new);
     }
 
@@ -36,11 +39,10 @@ public class BrandServiceImpl implements IBrandService {
             throw new IllegalArgumentException();
         }
 
-        return BrandEntityMapper
-                .mapper
+        return brandEntityMapper
                 .brandEntityToBrand(
                 brandRepository
-                        .save(BrandEntityMapper.mapper.brandToBrandEntity(brand)));
+                        .save(brandEntityMapper.brandToBrandEntity(brand)));
     }
 
     @Override
@@ -55,9 +57,9 @@ public class BrandServiceImpl implements IBrandService {
         Brand brandUpdate = brand;
         brandUpdate.setId(id);
 
-        return BrandEntityMapper.mapper.brandEntityToBrand(
+        return brandEntityMapper.brandEntityToBrand(
                 brandRepository
-                        .save(BrandEntityMapper.mapper
+                        .save(brandEntityMapper
                                 .brandToBrandEntity(brandUpdate)));
 
     }

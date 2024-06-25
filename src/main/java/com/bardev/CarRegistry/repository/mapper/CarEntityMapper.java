@@ -10,10 +10,8 @@ import org.springframework.data.domain.PageImpl;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Mapper
+@Mapper(componentModel = "spring")
 public interface CarEntityMapper {
-
-    CarEntityMapper mapper = Mappers.getMapper(CarEntityMapper.class);
 
     CarEntity carToCarEntity(Car car);
     Car carEntityToCar(CarEntity carEntity);

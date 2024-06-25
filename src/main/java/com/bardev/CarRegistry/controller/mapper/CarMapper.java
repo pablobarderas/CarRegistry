@@ -14,16 +14,12 @@ import org.springframework.data.domain.PageImpl;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Mapper
+@Mapper(componentModel = "spring")
 public interface CarMapper {
 
-    CarMapper mapper = Mappers.getMapper(CarMapper.class);
-
-    //@Mapping(target = "brandEntity", source = "brandName", qualifiedByName = "stringToBrand")
     @Mapping(target = "brand.name", source = "brandName")
     Car carDTOToCar(CarDTO carDTO);
 
-    //@Mapping(target = "brandName", source = "brandEntity", qualifiedByName = "brandToString")
     @Mapping(target = "brandName", source = "brand.name")
     CarDTO carToCarDTO(Car car);
 

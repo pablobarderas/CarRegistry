@@ -2,6 +2,8 @@ package com.bardev.CarRegistry.service.impl;
 
 import com.bardev.CarRegistry.repository.BrandRepository;
 import com.bardev.CarRegistry.repository.CarRepository;
+import com.bardev.CarRegistry.repository.entity.BrandEntity;
+import com.bardev.CarRegistry.repository.entity.CarEntity;
 import com.bardev.CarRegistry.repository.mapper.BrandEntityMapper;
 import com.bardev.CarRegistry.repository.mapper.CarEntityMapper;
 import com.bardev.CarRegistry.service.CarService;
@@ -26,11 +28,17 @@ public class CarServiceImpl implements CarService {
     @Autowired
     private BrandRepository brandRepository;
 
+    @Autowired
+    private CarEntityMapper carEntityMapper;
+
+    @Autowired
+    private BrandEntityMapper brandEntityMapper;
+
 
     // GET ALL CARS
     @Override
     public List<Car> getCars() {
-        return CarEntityMapper.mapper.carEntityListToCarList(carRepository.findAll());
+        return carEntityMapper.carEntityListToCarList(carRepository.findAll());
     }
 
     // GET CAR BY ID
@@ -38,7 +46,7 @@ public class CarServiceImpl implements CarService {
     @Override
     public Car getCarById(Integer id) {
         return  carRepository.findById(id)
-                .map(CarEntityMapper.mapper::carEntityToCar)
+                .map(carEntityMapper::carEntityToCar)
                 .orElseThrow(() -> new NoSuchElementException("Car with ID " + id + " not found"));
     }
 
@@ -53,18 +61,18 @@ public class CarServiceImpl implements CarService {
         // Get brand from Car
         Brand brand =  brandRepository.findByName(
                 car.getBrand().getName())
-                .map(BrandEntityMapper.mapper::brandEntityToBrand)
+                .map(brandEntityMapper::brandEntityToBrand)
                 .orElseThrow(() -> new NoSuchElementException("BrandEntity not found with id: " + car.getBrand().getId()));
 
         // Set brandEntity
         Car carCorrect = car;
-        carCorrect.setBrand(BrandEntityMapper.mapper.brandToBrandEntity(brand));
+        carCorrect.setBrand(brandEntityMapper.brandToBrandEntity(brand));
 
         log.info(carCorrect.getBrand().getName());
 
-        return  CarEntityMapper.mapper.carEntityToCar
+        return  carEntityMapper.carEntityToCar
                 (carRepository.save(
-                        CarEntityMapper.mapper.carToCarEntity(carCorrect)));
+                        carEntityMapper.carToCarEntity(carCorrect)));
     }
 
     // UPDATE CAR
@@ -77,19 +85,18 @@ public class CarServiceImpl implements CarService {
         }
 
         // Search brandEntity
-        Brand brand = brandRepository.findByName(String.valueOf(car.getBrand().getName()))
-                .map(BrandEntityMapper.mapper::brandEntityToBrand)
+        BrandEntity brand = brandRepository.findByName(car.getBrand().getName())
                 .orElseThrow(NoSuchElementException::new);
 
         // Update car
-        Car carUpdate = car;
+        CarEntity entity = carEntityMapper.carToCarEntity(car);
 
         // Set id and brandEntity of car
-        carUpdate.setId(car.getId());
-        carUpdate.setBrand(BrandEntityMapper.mapper.brandToBrandEntity(brand));
+        entity.setId(car.getId());
+        entity.setBrand(brand);
 
-        return CarEntityMapper.mapper.carEntityToCar(
-                carRepository.save(CarEntityMapper.mapper.carToCarEntity(carUpdate)));
+        return carEntityMapper.carEntityToCar(
+                carRepository.save(entity));
     }
 
     // DELETE CAR
@@ -106,7 +113,7 @@ public class CarServiceImpl implements CarService {
 
         PageRequest pageRequest = PageRequest.of(pageNumber, pageSize);
 
-        Page<Car> pageCar = CarEntityMapper.mapper.carEntityPageToCarPage
+        Page<Car> pageCar = carEntityMapper.carEntityPageToCarPage
                 (carRepository.findAll(pageRequest));
 
         return pageCar;

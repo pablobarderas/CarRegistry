@@ -21,11 +21,14 @@ public class CarController {
     @Autowired
     private CarService carService;
 
+    @Autowired
+    private CarMapper carMapper;
+
     @GetMapping("/cars")
     public ResponseEntity<List<CarWithBrandDTO>> getCars(){
         try {
             log.info("Get all cars");
-            return ResponseEntity.ok(CarMapper.mapper.carListToCarWithBrandDTOList(carService.getCars()));
+            return ResponseEntity.ok(carMapper.carListToCarWithBrandDTOList(carService.getCars()));
         }catch (NoSuchElementException e){
             log.error("There are no cars");
             return ResponseEntity.notFound().build();
@@ -41,7 +44,7 @@ public class CarController {
 
         try {
             log.info("Get car by id: {}",id);
-            return ResponseEntity.ok(CarMapper.mapper.carToCarWithBrandDTO(carService.getCarById(id)));
+            return ResponseEntity.ok(carMapper.carToCarWithBrandDTO(carService.getCarById(id)));
         }catch (NoSuchElementException e){
             log.info("No such element with id: {}",id);
             return ResponseEntity.notFound().build();
@@ -57,9 +60,9 @@ public class CarController {
 
         try {
 
-            CarDTO carDTOGet = CarMapper.mapper.
+            CarDTO carDTOGet = carMapper.
                     carToCarDTO(carService
-                            .addCar(CarMapper.mapper.carDTOToCar(carDTO)));
+                            .addCar(carMapper.carDTOToCar(carDTO)));
 
             return ResponseEntity.ok(carDTOGet);
 
@@ -76,8 +79,8 @@ public class CarController {
 
         try{
             log.info("Updating car: {}", carDTO);
-            CarDTO carUpdated = CarMapper.mapper.carToCarDTO(
-                    carService.updateCar(id, CarMapper.mapper.carDTOToCar(carDTO)));
+            CarDTO carUpdated = carMapper.carToCarDTO(
+                    carService.updateCar(id, carMapper.carDTOToCar(carDTO)));
             return ResponseEntity.ok(carUpdated);
         }catch (NoSuchElementException e){
             log.error("No such element with id: {}", id);
@@ -109,7 +112,7 @@ public class CarController {
     @GetMapping("/cars/page/{pageNumber}/size/{pageSize}")
     public ResponseEntity<Page<CarDTO>> getCarsPage(@PathVariable Integer pageNumber, @PathVariable Integer pageSize){
         try{
-            Page<CarDTO> carDTOPage = CarMapper.mapper.carPageToCarDTOPage(carService.findAllPageable(pageNumber, pageSize));
+            Page<CarDTO> carDTOPage = carMapper.carPageToCarDTOPage(carService.findAllPageable(pageNumber, pageSize));
             return ResponseEntity.ok().body(carDTOPage);
         }catch (Exception e){
             return ResponseEntity.internalServerError().build();
