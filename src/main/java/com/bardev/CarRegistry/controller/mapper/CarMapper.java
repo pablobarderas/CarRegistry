@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring")
@@ -47,5 +48,8 @@ public interface CarMapper {
                 .collect(Collectors.toList());
         return new PageImpl<>(carDTOs, carPage.getPageable(), carPage.getTotalElements());
     }
+
+    // CompletableFuture mappers
+    CompletableFuture<List<CarWithBrandDTO>> cfCarListToCfCarWithBrandDTOList(CompletableFuture<List<Car>> carWithBrandDTOListToCfCarList);
 
 }

@@ -1,18 +1,23 @@
 package com.bardev.CarRegistry.controller;
 
+import com.bardev.CarRegistry.config.AsyncConfig;
 import com.bardev.CarRegistry.controller.dto.CarDTO;
 import com.bardev.CarRegistry.controller.dto.CarWithBrandDTO;
 import com.bardev.CarRegistry.controller.mapper.CarMapper;
 import com.bardev.CarRegistry.service.CarService;
+import com.bardev.CarRegistry.service.model.Car;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.concurrent.CompletableFuture;
 
 @Slf4j
 @RestController
@@ -25,17 +30,14 @@ public class CarController {
     private CarMapper carMapper;
 
     @GetMapping("/cars")
-    public ResponseEntity<List<CarWithBrandDTO>> getCars(){
-        try {
-            log.info("Get all cars");
-            return ResponseEntity.ok(carMapper.carListToCarWithBrandDTOList(carService.getCars()));
-        }catch (NoSuchElementException e){
-            log.error("There are no cars");
-            return ResponseEntity.notFound().build();
-        }catch (Exception e){
-            log.error("Internal server error getting all cars");
-            return ResponseEntity.internalServerError().build();
-        }
+    public CompletableFuture<?> getCars(){
+        return CompletableFuture.supplyAsync(() -> carService.getCars())
+                .thenApply(carMapper::cfCarListToCfCarWithBrandDTOList)
+                .thenApply(ResponseEntity::ok)
+                .exceptionally(ex -> {
+                    log.error("There are no cars", ex);
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+                });
     }
 
     // GET CAR BY ID

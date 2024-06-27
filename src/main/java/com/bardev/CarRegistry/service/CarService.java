@@ -4,10 +4,11 @@ import com.bardev.CarRegistry.service.model.Car;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public interface CarService {
 
-    List<Car> getCars();
+    CompletableFuture<List<Car>> getCars();
     Car getCarById(Integer id);
     Car addCar(Car car);
     Car updateCar(Integer id, Car car);

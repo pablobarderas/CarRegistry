@@ -13,11 +13,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 @Slf4j
 @Service
@@ -39,8 +41,10 @@ public class CarServiceImpl implements CarService {
     // GET ALL CARS
     // If you have no cars, return empty list
     @Override
-    public List<Car> getCars() {
-        return carEntityMapper.carEntityListToCarList(carRepository.findAll());
+    @Async
+    public CompletableFuture<List<Car>> getCars() {
+        return CompletableFuture.completedFuture(carEntityMapper.carEntityListToCarList
+                        (carRepository.findAll()));
     }
 
     // GET CAR BY ID
