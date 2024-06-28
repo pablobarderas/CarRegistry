@@ -1,5 +1,6 @@
 package com.bardev.CarRegistry.repository.mapper;
 
+import com.bardev.CarRegistry.controller.dto.CarWithBrandDTO;
 import com.bardev.CarRegistry.repository.entity.CarEntity;
 import com.bardev.CarRegistry.service.model.Car;
 import org.mapstruct.Mapper;
@@ -8,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring")
@@ -33,4 +35,9 @@ public interface CarEntityMapper {
                 .collect(Collectors.toList());
         return new PageImpl<>(carEntities, carPage.getPageable(), carPage.getTotalElements());
     }
+
+    // CompletableFuture mappers
+    CompletableFuture<List<CarEntity>> cfCarListToCfCarEntityList(CompletableFuture<List<Car>> cfCarListToCfCarEntityList);
+    CompletableFuture<List<Car>> cfCarEntityListToCfCarList(CompletableFuture<List<CarEntity>> cfCarEntityListToCfCarList);
+
 }

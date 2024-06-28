@@ -50,6 +50,11 @@ public interface CarMapper {
     }
 
     // CompletableFuture mappers
-    CompletableFuture<List<CarWithBrandDTO>> cfCarListToCfCarWithBrandDTOList(CompletableFuture<List<Car>> carWithBrandDTOListToCfCarList);
+    CompletableFuture<List<CarWithBrandDTO>> cfCarListToCfCarWithBrandDTOList(CompletableFuture<List<Car>> cfCarWithBrandDTOListToCfCarList);
+    CompletableFuture<List<Car>> cfCarWithBrandDTOListToCfCarList(CompletableFuture<List<CarWithBrandDTO>> cfCarListToCfCarWithBrandDTOList);
+
+    // CompletableFuture mappers
+    CompletableFuture<List<CarDTO>> cfCarListToCfCarDTOList(CompletableFuture<List<Car>> cfCarDTOListToCfCarList);
+    CompletableFuture<List<Car>> cfCarDTOListToCfCarList(CompletableFuture<List<CarDTO>> cfCarListToCfCarDTOList);
 
 }

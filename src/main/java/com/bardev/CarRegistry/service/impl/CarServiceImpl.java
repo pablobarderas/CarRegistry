@@ -41,7 +41,7 @@ public class CarServiceImpl implements CarService {
     // GET ALL CARS
     // If you have no cars, return empty list
     @Override
-    @Async
+    @Async("taskExecutor")
     public CompletableFuture<List<Car>> getCars() {
         return CompletableFuture.completedFuture(carEntityMapper.carEntityListToCarList
                         (carRepository.findAll()));
@@ -58,23 +58,25 @@ public class CarServiceImpl implements CarService {
 
     // ADD CAR
     @Override
-    public Car addCar(Car car) {
+    @Async
+    public CompletableFuture<List<Car>> addCar(List<Car> carList) {
 
-        if (car==null){
-            throw new IllegalArgumentException();
-        }
+        // Update each car with brand
+        List<Car> carListUpdated = carList.stream()
+                .map(c->{
+                 BrandEntity b =brandRepository
+                                 .findByName(c.getBrand().getName())
+                                 .orElseThrow(NoSuchElementException::new);
+                 c.setBrand(b);
+                 return c;
+                }).toList();
 
-        // Get brand from Car
-        BrandEntity brand =  brandRepository.findByName(
-                car.getBrand().getName())
-                .orElseThrow(() -> new NoSuchElementException("BrandEntity not found with id: " + car.getBrand().getId()));
+        // Get completable future list
+        CompletableFuture<List<CarEntity>> carEntityList = CompletableFuture.completedFuture
+                (carRepository.saveAll
+                        (carEntityMapper.carListToCarEntityList(carListUpdated)));
 
-        // Set brandEntity
-        CarEntity entity = carEntityMapper.carToCarEntity(car);
-        entity.setBrand(brand);
-
-        return  carEntityMapper.carEntityToCar
-                (carRepository.save(entity));
+        return carEntityMapper.cfCarEntityListToCfCarList(carEntityList);
     }
 
     // UPDATE CAR

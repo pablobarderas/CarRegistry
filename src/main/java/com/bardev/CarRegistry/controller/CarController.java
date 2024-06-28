@@ -9,8 +9,6 @@ import com.bardev.CarRegistry.service.model.Car;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,13 +29,15 @@ public class CarController {
 
     @GetMapping("/cars")
     public CompletableFuture<?> getCars(){
-        return CompletableFuture.supplyAsync(() -> carService.getCars())
-                .thenApply(carMapper::cfCarListToCfCarWithBrandDTOList)
-                .thenApply(ResponseEntity::ok)
-                .exceptionally(ex -> {
-                    log.error("There are no cars", ex);
-                    return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-                });
+        try {
+            log.info("Get all cars");
+            return carMapper.cfCarListToCfCarWithBrandDTOList(
+                    carService.getCars()).thenApply(ResponseEntity::ok);
+
+        }catch (NoSuchElementException e){
+            log.error("There are no cars");
+            return CompletableFuture.failedFuture(e);
+        }
     }
 
     // GET CAR BY ID
@@ -58,19 +58,15 @@ public class CarController {
 
     // ADD CAR
     @PostMapping("/cars/add")
-    public ResponseEntity<CarDTO> addCar(@RequestBody CarDTO carDTO){
+    public CompletableFuture<?> addCar(@RequestBody List<CarDTO> carListDTO){
 
         try {
+            return carService.addCar(carMapper.carDTOListToCarList(carListDTO)).thenApply(ResponseEntity::ok);
 
-            CarDTO carDTOGet = carMapper.
-                    carToCarDTO(carService
-                            .addCar(carMapper.carDTOToCar(carDTO)));
-
-            return ResponseEntity.ok(carDTOGet);
 
         }catch (Exception e){
             log.error("Internal server error adding car");
-            return ResponseEntity.internalServerError().build();
+            return CompletableFuture.failedFuture(e);
         }
 
     }
