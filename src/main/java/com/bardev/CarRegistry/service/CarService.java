@@ -9,8 +9,8 @@ import java.util.concurrent.CompletableFuture;
 public interface CarService {
 
     CompletableFuture<List<Car>> getCars();
-    Car getCarById(Integer id);
     CompletableFuture<List<Car>> addCars(List<Car> carList);
+    Car getCarById(Integer id);
     Car updateCar(Integer id, Car car);
     void deleteCar(Integer id);
 

@@ -3,6 +3,7 @@ package com.bardev.CarRegistry.controller;
 import com.bardev.CarRegistry.controller.dto.BrandDTO;
 import com.bardev.CarRegistry.controller.mapper.BrandMapper;
 import com.bardev.CarRegistry.repository.mapper.BrandEntityMapper;
+import com.bardev.CarRegistry.service.BrandService;
 import com.bardev.CarRegistry.service.impl.BrandServiceImpl;
 import com.bardev.CarRegistry.service.model.Brand;
 import lombok.extern.slf4j.Slf4j;
@@ -12,28 +13,41 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.concurrent.CompletableFuture;
 
 @Slf4j
 @RestController
 public class BrandController {
 
     @Autowired
-    BrandServiceImpl brandServiceImpl;
+    private BrandService brandServiceImpl;
 
     @Autowired
     private BrandMapper brandMapper;
 
+    // GET ALL BRANDS (ASYNC)
     @GetMapping("/brands")
-    public ResponseEntity<List<BrandDTO>> getBrands(){
+    public CompletableFuture<?> getBrands(){
         try {
             log.info("Get all brands");
-            return ResponseEntity.ok(brandMapper.brandListToBrandDTOList(brandServiceImpl.getBrands()));
+
+            // Get brands
+            CompletableFuture<List<Brand>> brandsList =
+                    brandServiceImpl.getBrands();
+
+            // Parse brands to brandsDTO
+            List<BrandDTO> response = brandsList.get()
+                    .stream()
+                    .map(brandMapper::brandToBrandDTO)
+                    .toList();
+
+            return CompletableFuture.completedFuture(response).thenApply(ResponseEntity::ok);
         }catch (NoSuchElementException e){
             log.error("There are no brands");
-            return ResponseEntity.notFound().build();
+            return CompletableFuture.failedFuture(e);
         }catch (Exception e){
             log.error("Internal server error getting all brands");
-            return ResponseEntity.internalServerError().build();
+            return CompletableFuture.failedFuture(e);
         }
     }
 
@@ -56,7 +70,8 @@ public class BrandController {
     public ResponseEntity<BrandDTO> addBrand(@RequestBody BrandDTO brandDTO){
 
         try {
-            BrandDTO brandDTOGet = brandMapper.brandToBrandDTO(brandServiceImpl
+            BrandDTO brandDTOGet = brandMapper
+                    .brandToBrandDTO(brandServiceImpl
                     .addBrand(brandMapper.brandDTOToBrand(brandDTO)));
                     return ResponseEntity.ok(brandDTOGet);
         }catch (Exception e){
@@ -64,6 +79,36 @@ public class BrandController {
             return ResponseEntity.internalServerError().build();
         }
     }
+
+    // ADD BRANDS LIST (ASYNC)
+    @PostMapping("/brands/add/list")
+    public CompletableFuture<?> addBrands(@RequestBody List<BrandDTO> brandDTOList){
+
+        try {
+            log.info("Get all brands");
+
+            // Get brands list
+            CompletableFuture<List<Brand>> brands =
+                    brandServiceImpl
+                            .addBrands(brandMapper
+                                    .brandDTOListToBrandServiceList(brandDTOList));
+
+            // Parse brands list to response brands
+            List<BrandDTO> response = brands.get().stream()
+                    .map(brandMapper::brandToBrandDTO)
+                    .toList();
+
+            return  CompletableFuture
+                    .completedFuture(response)
+                    .thenApply(ResponseEntity::ok);
+
+        }catch (Exception e){
+            log.error("Internal server error adding brandEntities List");
+            return  CompletableFuture.failedFuture(e);
+        }
+    }
+
+
 
     @PutMapping("/brands/update/{id}")
     public ResponseEntity<BrandDTO> updateBrand(@PathVariable Integer id, @RequestBody BrandDTO brandDTO){

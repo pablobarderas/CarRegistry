@@ -22,7 +22,7 @@ public class BrandEntity {
     private Integer warranty;
     private String country;
 
-    @OneToMany(mappedBy = "brand", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "brand", fetch = FetchType.EAGER)
     private List<CarEntity> carEntityList;
 
 }
