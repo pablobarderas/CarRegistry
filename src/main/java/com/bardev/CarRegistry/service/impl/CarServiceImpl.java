@@ -60,10 +60,10 @@ public class CarServiceImpl implements CarService {
                 .orElseThrow(() -> new NoSuchElementException("Car with ID " + id + " not found"));
     }
 
-    // ADD CAR
+    // ADD CARS
     @Override
     @Async
-    public CompletableFuture<List<Car>> addCar(List<Car> carList) {
+    public CompletableFuture<List<Car>> addCars(List<Car> carList) {
 
         // Update each car with brand
         List<Car> carListUpdated = carList.stream()
@@ -75,12 +75,12 @@ public class CarServiceImpl implements CarService {
                  return c;
                 }).toList();
 
-        // Get completable future list
-        CompletableFuture<List<CarEntity>> carEntityList = CompletableFuture.completedFuture
-                (carRepository.saveAll
-                        (carEntityMapper.carListToCarEntityList(carListUpdated)));
+        // Add and get car entities list
+        List<CarEntity> carEntitiesList =
+                carRepository
+                .saveAll(carEntityMapper.carListToCarEntityList(carListUpdated));
 
-        return carEntityMapper.cfCarEntityListToCfCarList(carEntityList);
+        return CompletableFuture.completedFuture(carEntityMapper.carEntityListToCarList(carEntitiesList));
     }
 
     // UPDATE CAR

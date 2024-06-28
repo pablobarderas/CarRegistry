@@ -27,6 +27,7 @@ public class CarController {
     @Autowired
     private CarMapper carMapper;
 
+    // GET CARS (ASYNC)
     @GetMapping("/cars")
     public CompletableFuture<?> getCars(){
         try {
@@ -42,7 +43,9 @@ public class CarController {
                     .map(carMapper::carToCarWithBrandDTO)
                     .toList();
 
-            return CompletableFuture.completedFuture(response).thenApply(ResponseEntity::ok);
+            return CompletableFuture
+                    .completedFuture(response)
+                    .thenApply(ResponseEntity::ok);
 
         }catch (Exception e){
             log.error("There are no cars");
@@ -66,12 +69,23 @@ public class CarController {
         }
     }
 
-    // ADD CAR
+    // ADD CARS (ASYNC)
     @PostMapping("/cars/add")
     public CompletableFuture<?> addCar(@RequestBody List<CarDTO> carListDTO){
 
         try {
-            return carService.addCar(carMapper.carDTOListToCarList(carListDTO)).thenApply(ResponseEntity::ok);
+            // Add and get all cars
+            CompletableFuture<List<Car>> carList =
+                    carService.addCars(carMapper.carDTOListToCarList(carListDTO));
+
+            // Parse carList to response list
+            List<CarDTO> response = carList.get()
+                    .stream()
+                    .map(carMapper::carToCarDTO)
+                    .toList();
+
+            return CompletableFuture.completedFuture(response)
+                    .thenApply(ResponseEntity::ok);
 
 
         }catch (Exception e){

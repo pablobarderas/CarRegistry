@@ -36,8 +36,4 @@ public interface CarEntityMapper {
         return new PageImpl<>(carEntities, carPage.getPageable(), carPage.getTotalElements());
     }
 
-    // CompletableFuture mappers
-    CompletableFuture<List<CarEntity>> cfCarListToCfCarEntityList(CompletableFuture<List<Car>> cfCarListToCfCarEntityList);
-    CompletableFuture<List<Car>> cfCarEntityListToCfCarList(CompletableFuture<List<CarEntity>> cfCarEntityListToCfCarList);
-
 }

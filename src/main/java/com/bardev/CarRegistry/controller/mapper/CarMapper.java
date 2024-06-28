@@ -48,13 +48,4 @@ public interface CarMapper {
                 .collect(Collectors.toList());
         return new PageImpl<>(carDTOs, carPage.getPageable(), carPage.getTotalElements());
     }
-
-    // CompletableFuture mappers
-    CompletableFuture<List<CarWithBrandDTO>> cfCarListToCfCarWithBrandDTOList(CompletableFuture<List<Car>> cfCarWithBrandDTOListToCfCarList);
-    CompletableFuture<List<Car>> cfCarWithBrandDTOListToCfCarList(CompletableFuture<List<CarWithBrandDTO>> cfCarListToCfCarWithBrandDTOList);
-
-    // CompletableFuture mappers
-    CompletableFuture<List<CarDTO>> cfCarListToCfCarDTOList(CompletableFuture<List<Car>> cfCarDTOListToCfCarList);
-    CompletableFuture<List<Car>> cfCarDTOListToCfCarList(CompletableFuture<List<CarDTO>> cfCarListToCfCarDTOList);
-
 }

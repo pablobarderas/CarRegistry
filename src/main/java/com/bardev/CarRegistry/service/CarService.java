@@ -10,7 +10,7 @@ public interface CarService {
 
     CompletableFuture<List<Car>> getCars();
     Car getCarById(Integer id);
-    CompletableFuture<List<Car>> addCar(List<Car> carList);
+    CompletableFuture<List<Car>> addCars(List<Car> carList);
     Car updateCar(Integer id, Car car);
     void deleteCar(Integer id);
 
