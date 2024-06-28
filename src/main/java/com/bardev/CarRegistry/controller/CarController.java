@@ -31,10 +31,20 @@ public class CarController {
     public CompletableFuture<?> getCars(){
         try {
             log.info("Get all cars");
-            return carMapper.cfCarListToCfCarWithBrandDTOList(
-                    carService.getCars()).thenApply(ResponseEntity::ok);
 
-        }catch (NoSuchElementException e){
+            // Get cars
+            CompletableFuture<List<Car>> cars = carService.getCars();
+
+            // Parse cars to cars response
+            List<CarWithBrandDTO> response =
+                    cars.get()
+                    .stream()
+                    .map(carMapper::carToCarWithBrandDTO)
+                    .toList();
+
+            return CompletableFuture.completedFuture(response).thenApply(ResponseEntity::ok);
+
+        }catch (Exception e){
             log.error("There are no cars");
             return CompletableFuture.failedFuture(e);
         }

@@ -41,10 +41,14 @@ public class CarServiceImpl implements CarService {
     // GET ALL CARS
     // If you have no cars, return empty list
     @Override
-    @Async("taskExecutor")
+    @Async
     public CompletableFuture<List<Car>> getCars() {
-        return CompletableFuture.completedFuture(carEntityMapper.carEntityListToCarList
-                        (carRepository.findAll()));
+
+        // Find all cars
+        List<Car> carList = carEntityMapper.carEntityListToCarList
+                (carRepository.findAll());
+
+        return CompletableFuture.completedFuture(carList);
     }
 
     // GET CAR BY ID
