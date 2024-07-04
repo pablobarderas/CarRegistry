@@ -31,7 +31,7 @@ public class AuthenticationService {
                 .surname(request.getSurname())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .role("ROLE_USER")
+                .role("ROLE_CLIENT")
                 .build();
 
         // Save user with and generated token

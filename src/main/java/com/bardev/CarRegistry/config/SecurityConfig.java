@@ -55,8 +55,19 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.POST, "/login", "signup").permitAll() // authorize post
-                        .requestMatchers(HttpMethod.GET, "/api/v1/test/**").permitAll()   // authorize get
-                        .requestMatchers(HttpMethod.GET, "/test/**").permitAll()
+
+                        // Brands authorizations
+                        .requestMatchers(HttpMethod.POST, "/cars/**").permitAll() // authorize post
+                        .requestMatchers(HttpMethod.PUT, "/cars/**").permitAll() // authorize post
+                        .requestMatchers(HttpMethod.GET, "/cars/**").permitAll()   // authorize get
+                        .requestMatchers(HttpMethod.DELETE, "/cars/**").permitAll()
+
+                        // Brands authorizations
+                        .requestMatchers(HttpMethod.POST, "/brands/**").permitAll() // authorize post
+                        .requestMatchers(HttpMethod.GET, "/brands/**").permitAll()   // authorize get
+                        .requestMatchers(HttpMethod.PUT, "/brands/**").permitAll() // authorize post
+                        .requestMatchers(HttpMethod.DELETE, "/brands/**").permitAll()
+
                         .anyRequest().authenticated()
                 )
                 // Add provider previously defined

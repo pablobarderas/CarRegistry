@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
@@ -29,6 +30,7 @@ public class CarController {
 
     // GET CARS (ASYNC)
     @GetMapping("/cars")
+    @PreAuthorize("hasRole('CLIENT')")
     public CompletableFuture<?> getCars(){
         try {
             log.info("Get all cars");
@@ -55,6 +57,7 @@ public class CarController {
 
     // GET CAR BY ID
     @GetMapping("/cars/{id}")
+    @PreAuthorize("hasRole('CLIENT')")
     public ResponseEntity<CarWithBrandDTO> getCarById(@PathVariable Integer id){
 
         try {
@@ -71,6 +74,7 @@ public class CarController {
 
     // ADD CARS (ASYNC)
     @PostMapping("/cars/add")
+    @PreAuthorize("hasRole('VENDOR')")
     public CompletableFuture<?> addCar(@RequestBody List<CarDTO> carListDTO){
 
         try {
@@ -97,6 +101,7 @@ public class CarController {
 
     // UPDATE CAR
     @PutMapping("/cars/update/{id}")
+    @PreAuthorize("hasRole('VENDOR')")
     public ResponseEntity<CarDTO> updateCar(@PathVariable Integer id, @RequestBody CarDTO carDTO){
 
         try{
@@ -115,6 +120,7 @@ public class CarController {
 
     // DELETE METHOD
     @DeleteMapping("/cars/delete/{id}")
+    @PreAuthorize("hasRole('VENDOR')")
     public ResponseEntity<?> deleteCar(@PathVariable Integer id){
 
         try{
@@ -132,6 +138,7 @@ public class CarController {
 
     // GET PAGE
     @GetMapping("/cars/page/{pageNumber}/size/{pageSize}")
+    @PreAuthorize("hasRole('CLIENT')")
     public ResponseEntity<Page<CarDTO>> getCarsPage(@PathVariable Integer pageNumber, @PathVariable Integer pageSize){
         try{
             Page<CarDTO> carDTOPage = carMapper.carPageToCarDTOPage(carService.findAllPageable(pageNumber, pageSize));
