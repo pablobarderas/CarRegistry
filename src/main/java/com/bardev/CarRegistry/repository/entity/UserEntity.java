@@ -1,4 +1,4 @@
-package com.bardev.users_example.entities;
+package com.bardev.CarRegistry.repository.entity;
 
 import jakarta.persistence.*;
 import lombok.*;

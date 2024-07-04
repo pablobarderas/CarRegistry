@@ -1,7 +1,7 @@
-package com.bardev.users_example.filter;
+package com.bardev.CarRegistry.filter;
 
-import com.bardev.users_example.service.impl.JwtService;
-import com.bardev.users_example.service.impl.UserServiceImpl;
+import com.bardev.CarRegistry.service.impl.JwtService;
+import com.bardev.CarRegistry.service.impl.UserServiceImpl;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

@@ -1,8 +1,8 @@
-package com.bardev.users_example.service.impl;
+package com.bardev.CarRegistry.service.impl;
 
-import com.bardev.users_example.entities.UserEntity;
-import com.bardev.users_example.repository.UserRepository;
-import com.bardev.users_example.service.UserService;
+import com.bardev.CarRegistry.repository.UserRepository;
+import com.bardev.CarRegistry.repository.entity.UserEntity;
+import com.bardev.CarRegistry.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

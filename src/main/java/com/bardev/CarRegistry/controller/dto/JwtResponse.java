@@ -1,4 +1,4 @@
-package com.bardev.users_example.dto;
+package com.bardev.CarRegistry.controller.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

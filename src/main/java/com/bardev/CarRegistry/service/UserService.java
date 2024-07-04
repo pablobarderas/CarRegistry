@@ -1,10 +1,9 @@
-package com.bardev.users_example.service;
+package com.bardev.CarRegistry.service;
 
-import com.bardev.users_example.entities.UserEntity;
+import com.bardev.CarRegistry.repository.entity.UserEntity;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.stereotype.Service;
 
 public interface UserService {
-    public UserEntity save(UserEntity newUser);
+    UserEntity save(UserEntity newUser);
     UserDetailsService userDetailsService();
 }

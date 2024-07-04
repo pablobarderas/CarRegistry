@@ -1,8 +1,8 @@
-package com.bardev.users_example.rest;
+package com.bardev.CarRegistry.controller;
 
-import com.bardev.users_example.dto.LoginRequest;
-import com.bardev.users_example.dto.SignUpRequest;
-import com.bardev.users_example.service.impl.AuthenticationService;
+import com.bardev.CarRegistry.controller.dto.LoginRequest;
+import com.bardev.CarRegistry.controller.dto.SignUpRequest;
+import com.bardev.CarRegistry.service.impl.AuthenticationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

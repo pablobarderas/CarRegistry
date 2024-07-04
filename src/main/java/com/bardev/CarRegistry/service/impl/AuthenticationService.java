@@ -1,10 +1,10 @@
-package com.bardev.users_example.service.impl;
+package com.bardev.CarRegistry.service.impl;
 
-import com.bardev.users_example.dto.JwtResponse;
-import com.bardev.users_example.dto.LoginRequest;
-import com.bardev.users_example.dto.SignUpRequest;
-import com.bardev.users_example.entities.UserEntity;
-import com.bardev.users_example.repository.UserRepository;
+import com.bardev.CarRegistry.controller.dto.JwtResponse;
+import com.bardev.CarRegistry.controller.dto.LoginRequest;
+import com.bardev.CarRegistry.controller.dto.SignUpRequest;
+import com.bardev.CarRegistry.repository.UserRepository;
+import com.bardev.CarRegistry.repository.entity.UserEntity;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.BadRequestException;
 import org.springframework.security.authentication.AuthenticationManager;

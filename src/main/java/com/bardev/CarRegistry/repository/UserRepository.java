@@ -1,6 +1,6 @@
-package com.bardev.users_example.repository;
+package com.bardev.CarRegistry.repository;
 
-import com.bardev.users_example.entities.UserEntity;
+import com.bardev.CarRegistry.repository.entity.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

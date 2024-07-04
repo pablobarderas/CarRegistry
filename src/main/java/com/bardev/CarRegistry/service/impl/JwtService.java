@@ -1,4 +1,4 @@
-package com.bardev.users_example.service.impl;
+package com.bardev.CarRegistry.service.impl;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
