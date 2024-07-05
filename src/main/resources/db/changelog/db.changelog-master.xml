@@ -101,6 +101,24 @@
             <column name="year" value="2021" />
         </insert>
     </changeSet>
-    
+
+    <!-- USER TABLE -->
+    <changeSet id="user-table" author="root">
+        <createTable tableName="users">
+            <column name="id" type="INT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="email" type="VARCHAR(255)" >
+                <constraints unique="true" />
+            </column>
+            <column name="surname" type="VARCHAR(255)" />
+            <column name="role" type="VARCHAR(255)" />
+            <column name="password" type="VARCHAR(255)" />
+        </createTable>
+    </changeSet>
+
 
 </databaseChangeLog>

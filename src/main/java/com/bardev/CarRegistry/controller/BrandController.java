@@ -9,6 +9,7 @@ import com.bardev.CarRegistry.service.model.Brand;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,6 +28,7 @@ public class BrandController {
 
     // GET ALL BRANDS (ASYNC)
     @GetMapping("/brands")
+    @PreAuthorize("hasRole('CLIENT')")
     public CompletableFuture<?> getBrands(){
         try {
             log.info("Get all brands");
@@ -52,6 +54,7 @@ public class BrandController {
     }
 
     @GetMapping("/brands/{id}")
+    @PreAuthorize("hasRole('CLIENT')")
     public ResponseEntity<BrandDTO> getBrandById(@PathVariable Integer id){
         try {
             log.info("Get brandEntity by id: {}",id);
@@ -67,6 +70,7 @@ public class BrandController {
     }
 
     @PostMapping("/brands/add")
+    @PreAuthorize("hasRole('VENDOR')")
     public ResponseEntity<BrandDTO> addBrand(@RequestBody BrandDTO brandDTO){
 
         try {
@@ -82,6 +86,7 @@ public class BrandController {
 
     // ADD BRANDS LIST (ASYNC)
     @PostMapping("/brands/add/list")
+    @PreAuthorize("hasRole('VENDOR')")
     public CompletableFuture<?> addBrands(@RequestBody List<BrandDTO> brandDTOList){
 
         try {
@@ -111,6 +116,7 @@ public class BrandController {
 
 
     @PutMapping("/brands/update/{id}")
+    @PreAuthorize("hasRole('VENDOR')")
     public ResponseEntity<BrandDTO> updateBrand(@PathVariable Integer id, @RequestBody BrandDTO brandDTO){
 
         try{
@@ -130,6 +136,7 @@ public class BrandController {
     }
 
     @DeleteMapping("brands/delete/{id}")
+    @PreAuthorize("hasRole('VENDOR')")
     public ResponseEntity<BrandDTO> deleteBrand(@PathVariable Integer id){
 
         try{
