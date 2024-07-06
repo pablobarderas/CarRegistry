@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
@@ -105,6 +106,33 @@ public class CarServiceImpl implements CarService {
 
         // Set id and brandEntity of car
         entity.setId(car.getId());
+        entity.setBrand(brand);
+
+        return carEntityMapper.carEntityToCar(
+                carRepository.save(entity));
+    }
+
+    // ADD CAR
+    @Override
+    public Car addCar(Car car) {
+
+        // Check car is not null
+        Optional.ofNullable(car)
+                .orElseThrow(() -> new IllegalArgumentException("The car is not present in the request"));
+
+        // Check brand and brand name not null
+        Optional.ofNullable(car.getBrand())
+                .map(BrandEntity::getName)
+                .orElseThrow(() -> new IllegalArgumentException("The car brand is not present or incomplete"));
+
+        // Search and get brand
+        BrandEntity brand = brandRepository.findByName(car.getBrand().getName())
+                .orElseThrow(() -> new NoSuchElementException("Brand not found: " + car.getBrand().getName()));
+
+        // Map car to entity
+        CarEntity entity = carEntityMapper.carToCarEntity(car);
+
+        // Set brandEntity of car
         entity.setBrand(brand);
 
         return carEntityMapper.carEntityToCar(

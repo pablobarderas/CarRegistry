@@ -56,7 +56,7 @@ public class CarController {
     }
 
     // GET CAR BY ID
-    @GetMapping("/cars/{id}")
+    @GetMapping("/car/{id}")
     @PreAuthorize("hasRole('CLIENT')")
     public ResponseEntity<CarWithBrandDTO> getCarById(@PathVariable Integer id){
 
@@ -100,7 +100,26 @@ public class CarController {
     }
 
     // UPDATE CAR
-    @PutMapping("/cars/update/{id}")
+    @PostMapping("/car/add")
+    @PreAuthorize("hasRole('VENDOR')")
+    public ResponseEntity<CarDTO> addCar(@RequestBody CarDTO carDTO){
+
+        try{
+            log.info("Adding car: {}", carDTO);
+            CarDTO carAdded = carMapper.carToCarDTO(
+                    carService.addCar(carMapper.carDTOToCar(carDTO)));
+            return ResponseEntity.ok(carAdded);
+        }catch (NoSuchElementException e){
+            log.error("No such element on database");
+            return ResponseEntity.notFound().build();
+        }catch (Exception e){
+            log.error("Internal server error adding car");
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    // UPDATE CAR
+    @PutMapping("/car/update/{id}")
     @PreAuthorize("hasRole('VENDOR')")
     public ResponseEntity<CarDTO> updateCar(@PathVariable Integer id, @RequestBody CarDTO carDTO){
 
@@ -119,7 +138,7 @@ public class CarController {
     }
 
     // DELETE METHOD
-    @DeleteMapping("/cars/delete/{id}")
+    @DeleteMapping("/car/delete/{id}")
     @PreAuthorize("hasRole('VENDOR')")
     public ResponseEntity<?> deleteCar(@PathVariable Integer id){
 
