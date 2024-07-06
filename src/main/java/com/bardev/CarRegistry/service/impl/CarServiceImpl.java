@@ -65,15 +65,19 @@ public class CarServiceImpl implements CarService {
     @Async
     public CompletableFuture<List<Car>> addCars(List<Car> carList) {
 
-        // Update each car with brand
+        // Get all brands with one call
+        List<BrandEntity> brandsList = brandRepository.findAll();
+
+        // Update each car with brand, filter brands with car brand name and return it
         List<Car> carListUpdated = carList.stream()
-                .map(c->{
-                 BrandEntity b =brandRepository
-                                 .findByName(c.getBrand().getName())
-                                 .orElseThrow(NoSuchElementException::new);
-                 c.setBrand(b);
-                 return c;
-                }).toList();
+                .peek(car -> car.setBrand(
+                        brandsList.stream()
+                                .filter(
+                                b-> b.getName().equals(car.getBrand().getName())
+                        ).findFirst().orElseThrow(NoSuchElementException::new)
+                ))
+                .toList();
+
 
         // Add and get car entities list
         List<CarEntity> carEntitiesList =
