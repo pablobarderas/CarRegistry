@@ -99,7 +99,7 @@ public class CarController {
 
     }
 
-    // UPDATE CAR
+    // ADD CAR
     @PostMapping("/car/add")
     @PreAuthorize("hasRole('VENDOR')")
     public ResponseEntity<CarDTO> addCar(@RequestBody CarDTO carDTO){
