@@ -2,6 +2,7 @@ package com.bardev.CarRegistry.controller;
 
 import com.bardev.CarRegistry.CarRegistryApplication;
 import com.bardev.CarRegistry.controller.dto.CarDTO;
+import com.bardev.CarRegistry.controller.dto.CarWithBrandDTO;
 import com.bardev.CarRegistry.controller.mapper.CarMapper;
 import com.bardev.CarRegistry.repository.entity.BrandEntity;
 import com.bardev.CarRegistry.repository.entity.CarEntity;
@@ -27,6 +28,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.concurrent.CompletableFuture;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -55,6 +57,7 @@ class CarControllerTest {
     private static BrandEntity mercedes;
 
     private static Car car1;
+    private static Car car2;
     private static CarDTO carDTO;
 
 
@@ -86,6 +89,20 @@ class CarControllerTest {
                 .numDoors(5)
                 .build();
 
+        // CAR2
+        car2 = Car.builder()
+                .id(2)
+                .model("leon")
+                .price(20_000.0)
+                .colour("white")
+                .brand(mercedes)
+                .description("good car")
+                .fuelType("diesel")
+                .mileage(200_000)
+                .year(2000)
+                .numDoors(5)
+                .build();
+
         // CARDTO
         carDTO = CarDTO.builder()
                 .id(1)
@@ -107,12 +124,75 @@ class CarControllerTest {
 
     }
 
-    // TODO
+    // GET CARS: START
+
     @Test
-    void testGetCars(){
+    void testGetCarsUnauthorized() throws Exception {
+        CompletableFuture<List<Car>> carList = CompletableFuture.completedFuture(List.of(car1, car2));
 
+        // Mock get car
+        Mockito.when(carService.getCars())
+                .thenReturn(carList);
 
+        this.mockMvc
+                .perform(get("/cars"))
+                .andExpect(status().isForbidden());
     }
+/*
+    @Test
+    void testGetCarsIsOk() throws Exception {
+        CompletableFuture<List<Car>> carList = CompletableFuture.completedFuture(List.of(car1, car2));
+        List<CarWithBrandDTO> carWithBrandDTOList = List.of(
+                carMapper.carToCarWithBrandDTO(car1),
+                carMapper.carToCarWithBrandDTO(car2)
+        );
+
+        String responseJson = objectMapper.writeValueAsString(carWithBrandDTOList);
+
+        // Mock get cars service
+        Mockito.when(carService.getCars())
+                .thenReturn(carList);
+
+        // Expected car attributes
+        this.mockMvc
+                .perform(get("/cars")
+                        .with(user("client").roles("CLIENT")))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().json(responseJson))
+                .andDo(result -> log.info("Response JSON: " + result.getResponse().getContentAsString()));
+    }
+
+    @Test
+    void testGetCarsNoSuchElementException() throws Exception {
+
+        // Mock no such element exception
+        Mockito.when(carService.getCars())
+                .thenThrow(NoSuchElementException.class);
+
+        this.mockMvc
+                .perform(get("/cars")
+                        .with(user("client").roles("CLIENT")))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void testGetCarsThrowsException() throws Exception {
+
+        // Mock get car
+        Mockito.when(carService.getCars())
+                .thenThrow(RuntimeException.class);
+
+        this.mockMvc
+                .perform(get("/cars")
+                        .with(user("client").roles("CLIENT"))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isInternalServerError());
+    }
+
+    */
+    // GET CARS: END
+
 
     // GET CAR BY ID: START
     @Test
@@ -342,22 +422,56 @@ class CarControllerTest {
 
 
     // TODO
-    @Test
+   /* @Test
     void testAddCars(){
 
-    }
+    }*/
 
-    // TODO
+    // DELETE CAR: START
     @Test
-    void testDeleteCar(){
+    void testDeleteCarSuccess() throws Exception {
+        // Mock the delete service call
+        Mockito.doNothing().when(carService).deleteCar(1);
+
+        this.mockMvc
+                .perform(delete("/car/delete/{id}", 1)
+                        .with(user("vendor").roles("VENDOR")))
+                .andExpect(status().isNoContent());
 
     }
 
-    // TODO
     @Test
-    void testGetCarsPage(){
+    void testDeleteCarThrowsNoSuchElementException() throws Exception {
+        Mockito.doThrow(NoSuchElementException.class).when(carService).deleteCar(1);
 
+        this.mockMvc
+                .perform(delete("/car/delete/{1}", 1)
+                        .with(user("vendor").roles("VENDOR")))
+                .andExpect(status().isNotFound());
     }
+    @Test
+    void testDeleteCarUnauthorized() throws Exception {
+
+        // Test rest without role
+        this.mockMvc
+                .perform(delete("/car/delete/{1}", 1))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void testDeleteCarThrowsException() throws Exception {
+
+        // Mock RuntimeException
+        Mockito.doThrow(RuntimeException.class)
+                .when(carService).deleteCar(1);
+
+        this.mockMvc
+                .perform(delete("/car/delete/{1}", 1)
+                        .with(user("vendor").roles("VENDOR")))
+                .andExpect(status().isInternalServerError());
+    }
+
+    // DELETE CAR: END
 
 
 

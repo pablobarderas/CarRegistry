@@ -10,6 +10,7 @@ import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -34,27 +35,24 @@ public class CarController {
     @GetMapping("/cars")
     @PreAuthorize("hasRole('CLIENT')")
     public CompletableFuture<?> getCars(){
-        try {
+
             log.info("Get all cars");
 
             // Get cars
-            CompletableFuture<List<Car>> cars = carService.getCars();
+             return carService.getCars()
+                    .thenApply(carList -> {
+                        List<CarWithBrandDTO> carDTOList = carMapper.carListToCarWithBrandDTOList(carList);
+                        return ResponseEntity.ok()
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .body(carDTOList);
+                    }).exceptionally(ex -> {
+                         if (ex.getCause() instanceof NoSuchElementException) {
+                             return ResponseEntity.notFound().build();
+                         }
+                         return ResponseEntity.internalServerError().build();
+                     });
 
-            // Parse cars to cars response
-            List<CarWithBrandDTO> response =
-                    cars.get()
-                    .stream()
-                    .map(carMapper::carToCarWithBrandDTO)
-                    .toList();
 
-            return CompletableFuture
-                    .completedFuture(response)
-                    .thenApply(ResponseEntity::ok);
-
-        }catch (Exception e){
-            log.error("There are no cars");
-            return CompletableFuture.failedFuture(e);
-        }
     }
 
     // GET CAR BY ID
@@ -147,7 +145,7 @@ public class CarController {
         try{
             log.info("Deleting car with id: {}", id);
             carService.deleteCar(id);
-            return ResponseEntity.ok().build();
+            return ResponseEntity.noContent().build();
         }catch (NoSuchElementException e){
             log.info("No such element with id: {}", id);
             return ResponseEntity.notFound().build();
