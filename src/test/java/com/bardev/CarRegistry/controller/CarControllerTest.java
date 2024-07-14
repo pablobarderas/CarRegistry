@@ -26,9 +26,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -120,9 +120,8 @@ class CarControllerTest {
 
     }
 
-    // TODO
     @Test
-    void testAddCar() throws Exception{
+    void testAddCarIsOk() throws Exception{
 
         // Parse CarDTO to JSON
         String carDTOJson = objectMapper.writeValueAsString(carDTO);
@@ -133,6 +132,7 @@ class CarControllerTest {
                         .addCar(Mockito.any(Car.class)))
                 .thenReturn(car1);
 
+        // Test post method with vendor role and expect isOk status and car response
         this.mockMvc
                 .perform(post("/car/add")
                         .with(user("vendor").roles("VENDOR"))
@@ -142,6 +142,71 @@ class CarControllerTest {
                 .andExpect(MockMvcResultMatchers.content().string(carDTOJson));
 
     }
+
+    @Test
+    void testAddCarThrowsNoSuchElementException() throws Exception {
+        CarDTO carDTOWithoutBrand = new CarDTO();
+        carDTO.setBrandName("Unknown");
+
+        String carJson = objectMapper.writeValueAsString(carDTOWithoutBrand);
+
+        Mockito.when(carService.addCar(Mockito.any(Car.class)))
+                .thenThrow(NoSuchElementException.class);
+
+        this.mockMvc
+                .perform(post("/car/add")
+                        .with(user("vendor").roles("VENDOR"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(carJson))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void testAddCarUnauthorized() throws Exception {
+
+        String carJson = objectMapper.writeValueAsString(carDTO);
+
+        // Test rest without role
+        this.mockMvc
+                .perform(post("/car/add")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(carJson))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void testAddCarWithInvalidInput() throws Exception {
+        CarDTO carDTOEmpty = new CarDTO();
+        carDTO.setModel(""); // Invalid input: empty model
+
+        String carJson = objectMapper.writeValueAsString(carDTOEmpty);
+
+        this.mockMvc
+                .perform(post("/car/add")
+                        .with(user("vendor").roles("VENDOR"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(carJson))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void testAddCarThrowsException() throws Exception {
+
+        String carJson = objectMapper.writeValueAsString(carDTO);
+
+        // Mock RuntimeException
+        Mockito.when(carService.addCar(Mockito.any(Car.class)))
+                .thenThrow(RuntimeException.class);
+
+        this.mockMvc
+                .perform(post("/car/add")
+                        .with(user("vendor").roles("VENDOR"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(carJson))
+                .andExpect(status().isInternalServerError());
+    }
+
+
 
     // TODO
     @Test
