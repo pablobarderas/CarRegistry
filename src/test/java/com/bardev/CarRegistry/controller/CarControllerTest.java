@@ -29,8 +29,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(SpringExtension.class)
@@ -229,6 +228,22 @@ class CarControllerTest {
                 .andExpect(status().isForbidden());
     }
 
+    @Test
+    void testAddCarThrowsException() throws Exception {
+
+        String carJson = objectMapper.writeValueAsString(carDTO);
+
+        // Mock RuntimeException
+        Mockito.when(carService.addCar(Mockito.any(Car.class)))
+                .thenThrow(RuntimeException.class);
+
+        this.mockMvc
+                .perform(post("/car/add")
+                        .with(user("vendor").roles("VENDOR"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(carJson))
+                .andExpect(status().isInternalServerError());
+    }
 
     // Test invalid request
     /*
@@ -248,31 +263,82 @@ class CarControllerTest {
     }
 */
 
+    // ADD CAR: END
+
+
+    // UPDATE CAR: START
+    @Test
+    void testUpdateCarIsOk() throws Exception{
+
+        // Parse CarDTO to JSON
+        String carDTOJson = objectMapper.writeValueAsString(carDTO);
+        log.info("JSON carDTO update -> {}", carDTOJson);
+
+        // Check car service
+        Mockito.when(carService
+                        .updateCar(Mockito.anyInt(), Mockito.any(Car.class)))
+                .thenReturn(car1);
+
+        // Test post method with vendor role and expect isOk status and car response
+        this.mockMvc
+                .perform(put("/car/update/{1}", 1)
+                        .with(user("vendor").roles("VENDOR"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(carDTOJson))
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.content().string(carDTOJson));
+
+    }
 
     @Test
-    void testAddCarThrowsException() throws Exception {
+    void testUpdateCarThrowsNoSuchElementException() throws Exception {
+        CarDTO carDTOWithoutBrand = new CarDTO();
+        carDTO.setBrandName("Unknown");
+
+        String carJson = objectMapper.writeValueAsString(carDTOWithoutBrand);
+
+        Mockito.when(carService.updateCar(Mockito.anyInt(), Mockito.any(Car.class)))
+                .thenThrow(NoSuchElementException.class);
+
+        this.mockMvc
+                .perform(put("/car/update/{1}", 1)
+                        .with(user("vendor").roles("VENDOR"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(carJson))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void testUpdateCarUnauthorized() throws Exception {
+
+        String carJson = objectMapper.writeValueAsString(carDTO);
+
+        // Test rest without role
+        this.mockMvc
+                .perform(put("/car/update/{1}", 1)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(carJson))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void testUpdateCarThrowsException() throws Exception {
 
         String carJson = objectMapper.writeValueAsString(carDTO);
 
         // Mock RuntimeException
-        Mockito.when(carService.addCar(Mockito.any(Car.class)))
+        Mockito.when(carService.updateCar(Mockito.anyInt(), Mockito.any(Car.class)))
                 .thenThrow(RuntimeException.class);
 
         this.mockMvc
-                .perform(post("/car/add")
+                .perform(put("/car/update/{1}", 1)
                         .with(user("vendor").roles("VENDOR"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(carJson))
                 .andExpect(status().isInternalServerError());
     }
-    // ADD CAR: END
+    // UPDATE CAR: END
 
-
-    // TODO
-    @Test
-    void testUpdateCar(){
-
-    }
 
 
     // TODO
