@@ -6,11 +6,13 @@ import com.bardev.CarRegistry.controller.dto.CarWithBrandDTO;
 import com.bardev.CarRegistry.controller.mapper.CarMapper;
 import com.bardev.CarRegistry.service.CarService;
 import com.bardev.CarRegistry.service.model.Car;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;

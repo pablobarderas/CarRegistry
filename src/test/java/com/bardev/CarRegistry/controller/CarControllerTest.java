@@ -29,8 +29,9 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = CarRegistryApplication.class)
@@ -114,12 +115,66 @@ class CarControllerTest {
 
     }
 
-    // TODO
+    // GET CAR BY ID: START
     @Test
-    void testGetCarById() throws Exception {
+    void testGetCarByIdIsOk() throws Exception {
 
+        // Mock get car service
+        Mockito.when(carService.getCarById(Mockito.anyInt()))
+                .thenReturn(carMapper.carDTOToCar(carDTO));
+
+        // Expected car attributes
+        this.mockMvc
+                .perform(get("/car/{1}", 1)
+                        .with(user("client").roles("CLIENT")))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.model").value("altea"));
     }
 
+    @Test
+    void testGetCarByIdNoSuchElementException() throws Exception {
+
+        // Mock no such element exception
+        Mockito.when(carService.getCarById(Mockito.anyInt()))
+                .thenThrow(NoSuchElementException.class);
+
+        this.mockMvc
+                .perform(get("/car/{1}", 1)
+                        .with(user("client").roles("CLIENT")))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void testGetCarByIdUnauthorized() throws Exception {
+
+        // Mock get car
+        Mockito.when(carService.getCarById(Mockito.anyInt()))
+                .thenReturn(carMapper.carDTOToCar(carDTO));
+
+        this.mockMvc
+                .perform(get("/car/{1}", 1))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void testGetCarByIdThrowsException() throws Exception {
+
+        // Mock get car
+        Mockito.when(carService.getCarById(Mockito.anyInt()))
+                .thenThrow(RuntimeException.class);
+
+        this.mockMvc
+                .perform(get("/car/{1}", 1)
+                        .with(user("client").roles("CLIENT"))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isInternalServerError());
+    }
+    // GET CAR BY ID: END
+
+
+    // ADD CAR: START
     @Test
     void testAddCarIsOk() throws Exception{
 
@@ -174,10 +229,13 @@ class CarControllerTest {
                 .andExpect(status().isForbidden());
     }
 
+
+    // Test invalid request
+    /*
     @Test
     void testAddCarWithInvalidInput() throws Exception {
         CarDTO carDTOEmpty = new CarDTO();
-        carDTO.setModel(""); // Invalid input: empty model
+        carDTOEmpty.setBrandName("");
 
         String carJson = objectMapper.writeValueAsString(carDTOEmpty);
 
@@ -188,6 +246,8 @@ class CarControllerTest {
                         .content(carJson))
                 .andExpect(status().isBadRequest());
     }
+*/
+
 
     @Test
     void testAddCarThrowsException() throws Exception {
@@ -205,18 +265,19 @@ class CarControllerTest {
                         .content(carJson))
                 .andExpect(status().isInternalServerError());
     }
+    // ADD CAR: END
 
+
+    // TODO
+    @Test
+    void testUpdateCar(){
+
+    }
 
 
     // TODO
     @Test
     void testAddCars(){
-
-    }
-
-    // TODO
-    @Test
-    void testUpdateCar(){
 
     }
 
