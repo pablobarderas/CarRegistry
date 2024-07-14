@@ -2,7 +2,6 @@ package com.bardev.CarRegistry.controller;
 
 import com.bardev.CarRegistry.CarRegistryApplication;
 import com.bardev.CarRegistry.controller.dto.CarDTO;
-import com.bardev.CarRegistry.controller.dto.CarWithBrandDTO;
 import com.bardev.CarRegistry.controller.mapper.CarMapper;
 import com.bardev.CarRegistry.repository.entity.BrandEntity;
 import com.bardev.CarRegistry.repository.entity.CarEntity;
@@ -41,8 +40,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class CarControllerTest {
 
     private static final Logger log = LoggerFactory.getLogger(CarControllerTest.class);
-    @Autowired
-    private CarController carController;
 
     @Autowired
     private CarMapper carMapper;
@@ -64,8 +61,10 @@ class CarControllerTest {
     private ObjectMapper objectMapper;
 
 
-    @BeforeAll
-    static void setupAll(){
+    @BeforeEach
+    void setup(){
+        objectMapper = new ObjectMapper();
+
         // MERCEDES
         mercedes = BrandEntity.builder()
                 .id(1)
@@ -116,11 +115,6 @@ class CarControllerTest {
                 .year(2000)
                 .numDoors(5)
                 .build();
-    }
-
-    @BeforeEach
-    void setup(){
-        objectMapper = new ObjectMapper();
 
     }
 
@@ -449,6 +443,7 @@ class CarControllerTest {
                         .with(user("vendor").roles("VENDOR")))
                 .andExpect(status().isNotFound());
     }
+
     @Test
     void testDeleteCarUnauthorized() throws Exception {
 
