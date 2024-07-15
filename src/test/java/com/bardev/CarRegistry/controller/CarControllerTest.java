@@ -8,10 +8,8 @@ import com.bardev.CarRegistry.repository.entity.CarEntity;
 import com.bardev.CarRegistry.service.impl.CarServiceImpl;
 import com.bardev.CarRegistry.service.model.Car;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,8 +18,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
@@ -33,10 +30,9 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = CarRegistryApplication.class)
 @AutoConfigureMockMvc
-@ContextConfiguration(classes = CarRegistryApplication.class)
+@ActiveProfiles("test")
 class CarControllerTest {
 
     private static final Logger log = LoggerFactory.getLogger(CarControllerTest.class);
@@ -194,7 +190,7 @@ class CarControllerTest {
 
         // Mock get car service
         Mockito.when(carService.getCarById(Mockito.anyInt()))
-                .thenReturn(carMapper.carDTOToCar(carDTO));
+                .thenReturn(carMapper.carDTOToCar(carDTO));// Mock get car service
 
         // Expected car attributes
         this.mockMvc

@@ -1,6 +1,5 @@
 package com.bardev.CarRegistry.service;
 
-import com.bardev.CarRegistry.CarRegistryApplication;
 import com.bardev.CarRegistry.repository.BrandRepository;
 import com.bardev.CarRegistry.repository.CarRepository;
 import com.bardev.CarRegistry.repository.entity.BrandEntity;
@@ -14,23 +13,16 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = CarRegistryApplication.class)
-@AutoConfigureMockMvc
-@ContextConfiguration(classes = CarRegistryApplication.class)
+@ExtendWith(MockitoExtension.class)
 public class CarServiceTest {
 
     @InjectMocks
