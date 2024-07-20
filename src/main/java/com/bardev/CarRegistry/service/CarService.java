@@ -1,7 +1,9 @@
 package com.bardev.CarRegistry.service;
 
+import com.bardev.CarRegistry.controller.dto.CarWithBrandDTO;
 import com.bardev.CarRegistry.service.model.Car;
 import org.springframework.data.domain.Page;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.sql.Blob;
 import java.util.List;
@@ -19,4 +21,6 @@ public interface CarService {
     Page<Car> findAllPageable(Integer pageNumber, Integer pageSize);
 
     String getCarsCsv();
+
+    List<Car> uploadCars(MultipartFile file);
 }

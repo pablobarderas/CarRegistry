@@ -10,12 +10,20 @@ import com.bardev.CarRegistry.service.CarService;
 import com.bardev.CarRegistry.service.model.Brand;
 import com.bardev.CarRegistry.service.model.Car;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
@@ -182,5 +190,59 @@ public class CarServiceImpl implements CarService {
 
         }
         return csvContent.toString();
+    }
+
+    @Override
+    public List<Car> uploadCars(MultipartFile file) {
+        List<CarEntity> carEntityList = new ArrayList<>();
+        List<Car> carList;
+        List<BrandEntity> brands = brandRepository.findAll();
+
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(file.getInputStream(), StandardCharsets.UTF_8))){
+
+            // Parse csv
+            CSVParser parser = new CSVParser(br, CSVFormat.DEFAULT
+                    .withFirstRecordAsHeader()
+                    .withIgnoreHeaderCase().withTrim());
+
+            // Get each csv line
+            Iterable<CSVRecord> records = parser.getRecords();
+
+            // Add attributes from csv to cars
+            for (CSVRecord recordLine : records) {
+                CarEntity car = new CarEntity();
+                String brandName = recordLine.get("brand");
+
+                // Check brand exist and set it
+                BrandEntity brand = brandRepository
+                        .findByName(brandName)
+                        .orElseThrow(()-> new NoSuchElementException("Brand not found"));
+
+                car.setBrand(brand);
+                car.setModel(recordLine.get("model"));
+                car.setMileage(Integer.valueOf(recordLine.get("mileage")));
+                car.setPrice(Double.valueOf( recordLine.get("price")));
+                car.setYear(Integer.valueOf(recordLine.get("year")));
+                car.setDescription(recordLine.get("description"));
+                car.setColour(recordLine.get("colour"));
+                car.setFuelType(recordLine.get("fuel_type"));
+                car.setNumDoors(Integer.valueOf(recordLine.get("num_doors")));
+
+                carEntityList.add(car);
+            }
+
+            // Save entities
+            carList = carEntityMapper.carEntityListToCarList(carRepository.saveAll(carEntityList));
+            log.info("All users saved");
+
+
+        } catch (IOException e) {
+            log.error("Failed to load cars");
+            throw new RuntimeException("Failed to load cars: " + e.getMessage(), e);
+        }catch (NoSuchElementException e) {
+            log.error("Brand not found", e);
+            throw new RuntimeException("Failed to load cars: " + e.getMessage(), e);
+        }
+        return carList;
     }
 }

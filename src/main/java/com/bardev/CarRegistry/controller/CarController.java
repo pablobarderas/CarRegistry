@@ -17,10 +17,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
 @Slf4j
@@ -173,15 +175,45 @@ public class CarController {
     @PreAuthorize("hasAnyRole('CLIENT', 'VENDOR')")
     public ResponseEntity<?> getCsvCars() {
 
-        // Set headers
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-        headers.setContentDispositionFormData("attachment", "cars_generated.csv");
+        try {
+            // Set headers
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+            headers.setContentDispositionFormData("attachment", "cars_generated.csv");
 
-        // Get bytes from csv
-        byte[] csvBytes = carService.getCarsCsv().getBytes();
+            // Get bytes from csv
+            byte[] csvBytes = carService.getCarsCsv().getBytes();
+            log.info("File download successfully");
+            return new ResponseEntity<>(csvBytes, headers, HttpStatus.OK);
 
-        return new ResponseEntity<>(csvBytes, headers, HttpStatus.OK);
+        }catch (Exception e){
+            log.error("File not generated correctly");
+            return ResponseEntity.badRequest().body("File not generated correctly");
+        }
+
+    }
+
+    @PostMapping("/cars/csv")
+    @PreAuthorize("hasAnyRole('CLIENT', 'VENDOR')")
+    public ResponseEntity<?> uploadCsv(@RequestParam(value = "file")MultipartFile file) {
+
+        if (file.isEmpty()){
+            log.error("The file is empty");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+
+        }
+
+        if(Objects.requireNonNull(file.getOriginalFilename()).endsWith(".csv")){
+            log.info("File name: {}", file.getOriginalFilename());
+
+            // Add users from csv
+            List<CarWithBrandDTO> carsList = carMapper.carListToCarWithBrandDTOList(carService.uploadCars(file));
+            log.info("File successfully updated.");
+            return ResponseEntity.ok(carsList);
+        }
+
+        log.error("The file is not a csv file");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
 
     }
 
