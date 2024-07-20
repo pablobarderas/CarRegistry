@@ -10,6 +10,8 @@ import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -166,5 +168,24 @@ public class CarController {
             return ResponseEntity.internalServerError().build();
         }
     }
+
+    @GetMapping("/cars/csv")
+    @PreAuthorize("hasAnyRole('CLIENT', 'VENDOR')")
+    public ResponseEntity<?> getCsvCars() {
+
+        // Set headers
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+        headers.setContentDispositionFormData("attachment", "cars_generated.csv");
+
+        // Get bytes from csv
+        byte[] csvBytes = carService.getCarsCsv().getBytes();
+
+        return new ResponseEntity<>(csvBytes, headers, HttpStatus.OK);
+
+    }
+
+
+
 
 }

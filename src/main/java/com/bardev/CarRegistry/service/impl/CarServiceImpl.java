@@ -16,10 +16,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 @Slf4j
@@ -37,6 +34,9 @@ public class CarServiceImpl implements CarService {
 
     @Autowired
     private BrandEntityMapper brandEntityMapper;
+
+    private final String[] HEADERS = {"ID", "BRAND", "MODEL", "MILEAGE", "PRICE", "YEAR", "DESCRIPTION",
+            "COLOUR", "FUEL_TYPE", "NUM_DOORS"};
 
 
     // GET ALL CARS
@@ -157,5 +157,30 @@ public class CarServiceImpl implements CarService {
                 (carRepository.findAll(pageRequest));
 
         return pageCar;
+    }
+
+    @Override
+    public String getCarsCsv() {
+        List<CarEntity> carsList = carRepository.findAll();
+
+        // Fill csv with cars
+        StringBuilder csvContent = new StringBuilder();
+        csvContent.append(Arrays.toString(HEADERS)).append("\n");
+
+        for (CarEntity car: carsList){
+            csvContent
+                    .append(car.getId()).append(",")
+                    .append(car.getBrand().getName()).append(",")
+                    .append(car.getModel()).append(",")
+                    .append(car.getMileage()).append(",")
+                    .append(car.getPrice()).append(",")
+                    .append(car.getYear()).append(",")
+                    .append(car.getDescription()).append(",")
+                    .append(car.getColour()).append(",")
+                    .append(car.getFuelType()).append(",")
+                    .append(car.getNumDoors()).append("\n");
+
+        }
+        return csvContent.toString();
     }
 }
