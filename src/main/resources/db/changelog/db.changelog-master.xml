@@ -117,6 +117,7 @@
             <column name="surname" type="VARCHAR(255)" />
             <column name="role" type="VARCHAR(255)" />
             <column name="password" type="VARCHAR(255)" />
+            <column name="image" type="LONGBLOB" />
         </createTable>
     </changeSet>
 

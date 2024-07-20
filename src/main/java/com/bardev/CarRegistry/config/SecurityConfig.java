@@ -54,7 +54,7 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // Sessions without state
                 )
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(HttpMethod.POST, "/login", "signup").permitAll() // authorize post
+                        .requestMatchers(HttpMethod.POST, "/login", "/signup", "/addUserImage/**", "/downloadUserImage/**").permitAll() // authorize post
 
                         // Brands authorizations
                         .requestMatchers(HttpMethod.POST, "/cars/**").permitAll() // authorize post
